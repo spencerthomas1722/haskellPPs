@@ -101,3 +101,9 @@ intRCN (RCN2 cn _ np tv) =
    \ e -> ((intCN cn e) && 
            (intNP np (\ subj -> (intTV tv subj e))))
 
+intPP :: PP -> Entity -> Bool
+intPP :: (P p loc) = 
+  \ x -> intNP loc (\ obj -> intTV p x obj)  -- copied from intVP
+
+intP :: P -> Entity -> Entity -> Bool
+intP In = \ x y -> in x y

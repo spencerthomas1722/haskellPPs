@@ -54,6 +54,8 @@ data INF  = Laugh | Sheer | Shudder | INF TINF NP deriving Show
 data TINF = Love | Admire | Help | Defeat | Catch 
             deriving Show 
 data To   = To deriving Show
+data PP = Here | There | P NP
+data P = In | At | On | Over | Under | For | To | Behind deriving Show
 
 data Form =  P String | Ng Form | Cnj [Form] | Dsj [Form] 
             deriving Eq
