@@ -5,7 +5,7 @@ import Data.List
 data Entity = A | B | C | D | E | F | G
             | H | I | J | K | L | M | N 
             | O | P | Q | R | S | T | U 
-            | V | W | X | Y | Z | Unspec
+            | V | W | X | Y | Z | Wizardville | Unspec
      deriving (Eq,Show,Bounded,Enum)
 
 entities :: [Entity]
@@ -57,7 +57,7 @@ laugh   = list2OnePlacePred [A,G,E]
 cheer   = list2OnePlacePred [M,D]
 shudder = list2OnePlacePred [S]
 
-love, admire, help, defeat :: TwoPlacePred
+love, admire, help, defeat, in :: TwoPlacePred
 
 love   = curry (`elem` [(Y,E),(B,S),(R,S)])
 admire = curry (`elem` [(x,G) | x <- entities, person x])
@@ -66,6 +66,7 @@ defeat = curry (`elem` [(x,y) | x <- entities,
                                 y <- entities,
                                 dwarf x && giant y]
                     ++ [(A,W),(A,V)])
+NPin = curry (`elem` [(W, Wizardville)])
 
 curry3 :: ((a,b,c) -> d) -> a -> b -> c -> d
 curry3 f x y z = f (x,y,z)

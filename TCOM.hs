@@ -106,4 +106,4 @@ intPP :: (P p loc) =
   \ x -> intNP loc (\ obj -> intTV p x obj)  -- copied from intVP
 
 intP :: P -> Entity -> Entity -> Bool
-intP In = \ x y -> in x y
+intP NPIn = \ x y -> NPin x y
