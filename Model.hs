@@ -68,6 +68,8 @@ defeat = curry (`elem` [(x,y) | x <- entities,
                     ++ [(A,W),(A,V)])
 NPin = curry (`elem` [(W, Wizardville)])
 
+NPfor = curry (`elem` [(X, Princess)])
+
 curry3 :: ((a,b,c) -> d) -> a -> b -> c -> d
 curry3 f x y z = f (x,y,z)
 
