@@ -1,7 +1,7 @@
 module TCOM where 
 
 import Data.List
-import FSynF
+import FSynFPP
 import Model
 
 allNum, noNum :: Int -> Int -> Bool
@@ -35,6 +35,7 @@ intNP LittleMook    = \ p -> p littleMook
 intNP Atreyu        = \ p -> p atreyu
 intNP (NP1 det cn)  = (intDET det) (intCN cn) 
 intNP (NP2 det rcn) = (intDET det) (intRCN rcn) 
+intNP (NPP np pp) = (intNP np) (intPP pp) 
 
 intVP :: VP -> Entity -> Bool 
 intVP Laughed   = \ x -> laugh x
@@ -65,6 +66,7 @@ intCN Giant    = \ x -> giant x
 intCN Wizard   = \ x -> wizard x 
 intCN Sword    = \ x -> sword x
 intCN Dagger   = \ x -> dagger x
+intCN Kingdom  = \ x -> kingdom x
 
 intDET :: DET -> 
          (Entity -> Bool) -> (Entity -> Bool) -> Bool
@@ -101,9 +103,13 @@ intRCN (RCN2 cn _ np tv) =
    \ e -> ((intCN cn e) && 
            (intNP np (\ subj -> (intTV tv subj e))))
 
-intPP :: PP -> Entity -> Bool
-intPP :: (P p loc) = 
-  \ x -> intNP loc (\ obj -> intTV p x obj)  -- copied from intVP
+-- NEW STUFF: --
 
-intP :: P -> Entity -> Entity -> Bool
-intP NPIn = \ x y -> NPin x y
+intPP :: PP -> Entity -> Bool
+intPP (PP1 pr np) = \ x -> intNP np (\ y -> intPR pr x y)  -- adapted from intVP
+-- intVP (VP1 tv np) = \ s -> intNP np (\ o -> intTV tv s o)
+
+intPR :: PR -> Entity -> Entity -> Bool  -- adapted from intTV
+-- intTV Loved    = \ x y -> love x y
+intPR NPIn = \ x y -> \ P -> (inNP x y) && (P y)  -- the functions inNP and forNP are located in Model.hs
+intPR NPFor = \ x y -> \ P -> (forNP x y) && (P y)

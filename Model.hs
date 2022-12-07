@@ -5,13 +5,13 @@ import Data.List
 data Entity = A | B | C | D | E | F | G
             | H | I | J | K | L | M | N 
             | O | P | Q | R | S | T | U 
-            | V | W | X | Y | Z | Wizardville | Unspec
+            | V | W | X | Y | Z | WL | Unspec
      deriving (Eq,Show,Bounded,Enum)
 
 entities :: [Entity]
 entities =  [minBound..maxBound] 
 
-snowWhite, alice, dorothy, goldilocks, littleMook, atreyu
+snowWhite, alice, dorothy, goldilocks, littleMook, atreyu, wizardland
                                                 :: Entity
 
 snowWhite  = S
@@ -20,6 +20,7 @@ dorothy    = D
 goldilocks = G 
 littleMook = M
 atreyu     = Y
+wizardland = WL
 
 type OnePlacePred   = Entity -> Bool
 type TwoPlacePred   = Entity -> Entity -> Bool
@@ -28,7 +29,7 @@ type ThreePlacePred = Entity -> Entity -> Entity -> Bool
 list2OnePlacePred :: [Entity] -> OnePlacePred
 list2OnePlacePred xs = \ x -> elem x xs
 
-girl, boy, princess, dwarf, giant, wizard, sword, dagger
+girl, boy, princess, dwarf, giant, wizard, sword, dagger, kingdom
                                          :: OnePlacePred
 
 girl     = list2OnePlacePred [S,A,D,G]
@@ -39,6 +40,7 @@ giant    = list2OnePlacePred [T]
 wizard   = list2OnePlacePred [W,V]
 sword    = list2OnePlacePred [F]
 dagger   = list2OnePlacePred [X]
+kingdom  = list2OnePlacePred [WL]
 
 child, person, man, woman, male, female, thing :: OnePlacePred
 
@@ -57,7 +59,7 @@ laugh   = list2OnePlacePred [A,G,E]
 cheer   = list2OnePlacePred [M,D]
 shudder = list2OnePlacePred [S]
 
-love, admire, help, defeat, in :: TwoPlacePred
+love, admire, help, defeat :: TwoPlacePred
 
 love   = curry (`elem` [(Y,E),(B,S),(R,S)])
 admire = curry (`elem` [(x,G) | x <- entities, person x])
@@ -66,9 +68,10 @@ defeat = curry (`elem` [(x,y) | x <- entities,
                                 y <- entities,
                                 dwarf x && giant y]
                     ++ [(A,W),(A,V)])
-NPin = curry (`elem` [(W, Wizardville)])
 
-NPfor = curry (`elem` [(X, Princess)])
+inNP, forNP :: TwoPlacePred
+inNP   = curry (`elem` [(W, WL), (V, WL)])
+forNP  = curry (`elem` [(X, E)])
 
 curry3 :: ((a,b,c) -> d) -> a -> b -> c -> d
 curry3 f x y z = f (x,y,z)
