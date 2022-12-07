@@ -27,7 +27,7 @@ type Feedback = [Answer]
 
 data Sent = Sent NP VP deriving Show
 data NP   = SnowWhite  | Alice  | Dorothy | Goldilocks 
-          | LittleMook | Atreyu | Everyone | Someone | NPP NP PP  -- NPP NP PP new
+          | LittleMook | Atreyu | Everyone | Someone 
           | NP1 DET CN | NP2 DET RCN 
           deriving Show
 data DET  = The | Every | Some | No | Most | AtLeast | AtMost

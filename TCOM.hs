@@ -35,7 +35,6 @@ intNP LittleMook    = \ p -> p littleMook
 intNP Atreyu        = \ p -> p atreyu
 intNP (NP1 det cn)  = (intDET det) (intCN cn) 
 intNP (NP2 det rcn) = (intDET det) (intRCN rcn) 
-intNP (NPP np pp) = (intNP np) (intPP pp) 
 
 intVP :: VP -> Entity -> Bool 
 intVP Laughed   = \ x -> laugh x
@@ -67,6 +66,7 @@ intCN Wizard   = \ x -> wizard x
 intCN Sword    = \ x -> sword x
 intCN Dagger   = \ x -> dagger x
 intCN Kingdom  = \ x -> kingdom x
+intCN (CNP cn pp) = (intCN cn) (intPP pp)
 
 intDET :: DET -> 
          (Entity -> Bool) -> (Entity -> Bool) -> Bool
@@ -105,11 +105,11 @@ intRCN (RCN2 cn _ np tv) =
 
 -- NEW STUFF: --
 
-intPP :: PP -> Entity -> Bool
-intPP (PP1 pr np) = \ x -> intNP np (\ y -> intPR pr x y)  -- adapted from intVP
+intPP :: PP -> (Entity -> Bool) -> (Entity -> Bool)
+intPP (PP1 pr n) = \ prop -> \x -> intNP n (\ y -> intPR pr x y) && prop x -- adapted from intVP
 -- intVP (VP1 tv np) = \ s -> intNP np (\ o -> intTV tv s o)
 
-intPR :: PR -> Entity -> Entity -> Bool  -- adapted from intTV
+intPR :: PR -> Entity -> Entity -> Bool -- adapted from intTV
 -- intTV Loved    = \ x y -> love x y
-intPR NPIn = \ x y -> \ P -> (inNP x y) && (P y)  -- the functions inNP and forNP are located in Model.hs
-intPR NPFor = \ x y -> \ P -> (forNP x y) && (P y)
+intPR NPIn = \ x y -> (inNP x y) -- the functions inNP and forNP are located in Model.hs
+intPR NPFor = \ x y -> (forNP x y)
