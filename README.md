@@ -1,0 +1,10 @@
+- [x] Lambda calculus stuff
+- [x] Adjunct PPs ("[every wizard in every kingdom] laughed")
+    - [ ] Adjuncts on VPs ("every wizard [laughed in some kingdom]")
+- [x] Predicative PPs ("every wizard is in some kingdom")
+    - [ ] Other uses of the copula?
+- [ ] Scope ambiguity
+- [ ] Implications
+- [ ] Adjectives
+    - [ ] Comparisons ("more", "less")
+    - [ ] Subjective adjectives (e.g. "good wizard")
