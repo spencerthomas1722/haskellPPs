@@ -8,3 +8,4 @@
 - [ ] Adjectives
     - [ ] Comparisons ("more", "less")
     - [ ] Subjective adjectives (e.g. "good wizard")
+- [ ] Add more vocabulary
