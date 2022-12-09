@@ -41,7 +41,7 @@ intVP :: VP -> Entity -> Bool
 intVP Laughed   = \ x -> laugh x
 intVP Cheered   = \ x -> cheer x 
 intVP Shuddered = \ x -> shudder x 
-
+intVP (COP1 be pp) = \ subj -> intPP pp subj
 intVP (VP1 tv np) = 
   \ subj -> intNP np (\ obj -> intTV tv subj obj)
 intVP (VP2 dv np1 np2) = 

@@ -43,10 +43,12 @@ data That = That deriving Show
 data VP   = Laughed | Cheered | Shuddered | VPP VP PP  -- VPP VP PP new
           | VP1 TV NP | VP2 DV NP NP
           | VP3 AV To INF
+          | COP1 BE PP  -- | COP2 BE ADJ | COP3 BE NP 
           deriving Show 
 data TV   = Loved   | Admired | Helped 
           | Defeated | Caught
           deriving Show 
+data BE = Is | Are deriving Show
 
 data DV   = Gave deriving Show
 data AV   = Hoped | Wanted deriving Show 
