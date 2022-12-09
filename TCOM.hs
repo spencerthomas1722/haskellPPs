@@ -35,6 +35,7 @@ intNP LittleMook    = \ p -> p littleMook
 intNP Atreyu        = \ p -> p atreyu
 intNP (NP1 det cn)  = (intDET det) (intCN cn) 
 intNP (NP2 det rcn) = (intDET det) (intRCN rcn) 
+intNP (NP3 det pcn) = (intDET det) (intPCN pcn)
 
 intVP :: VP -> Entity -> Bool 
 intVP Laughed   = \ x -> laugh x
@@ -66,7 +67,6 @@ intCN Wizard   = \ x -> wizard x
 intCN Sword    = \ x -> sword x
 intCN Dagger   = \ x -> dagger x
 intCN Kingdom  = \ x -> kingdom x
-intCN (CNP cn pp) = (intCN cn) (intPP pp)
 
 intDET :: DET -> 
          (Entity -> Bool) -> (Entity -> Bool) -> Bool
@@ -104,10 +104,13 @@ intRCN (RCN2 cn _ np tv) =
            (intNP np (\ subj -> (intTV tv subj e))))
 
 -- NEW STUFF: --
+intPCN :: PCN -> (Entity -> Bool)
+intPCN (PCN1 cn pp) = \ x -> ((intCN cn x) && (intPP pp x))
+-- intRCN (RCN1 cn _ vp) = \ e -> ((intCN cn e) && (intVP vp e))
 
-intPP :: PP -> (Entity -> Bool) -> (Entity -> Bool)
-intPP (PP1 pr n) = \ prop -> \x -> intNP n (\ y -> intPR pr x y) && prop x -- adapted from intVP
--- intVP (VP1 tv np) = \ s -> intNP np (\ o -> intTV tv s o)
+intPP :: PP -> (Entity -> Bool)
+intPP (PP1 pr n) = \x -> intNP n (\ loc -> intPR pr x loc) -- adapted from intVP
+-- intVP (VP1 tv np) = \ subj -> intNP np (\ obj -> intTV tv subj obj)
 
 intPR :: PR -> Entity -> Entity -> Bool -- adapted from intTV
 -- intTV Loved    = \ x y -> love x y

@@ -55,7 +55,7 @@ thing  = \ x -> not (person x || x == Unspec)
 
 laugh, cheer, shudder :: OnePlacePred
 
-laugh   = list2OnePlacePred [A,G,E]
+laugh   = list2OnePlacePred [A,G,E,W]
 cheer   = list2OnePlacePred [M,D]
 shudder = list2OnePlacePred [S]
 
@@ -88,4 +88,3 @@ passivize r = \ x -> r Unspec x
 
 self ::  (a -> a -> b) -> a -> b
 self p = \ x -> p x x 
-
