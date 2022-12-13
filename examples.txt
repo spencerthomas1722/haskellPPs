@@ -1,0 +1,2 @@
+intSent(Sent (NP1 Some Wizard) (VP4 (PVP1 SleptP (PP1 In (NP1 Some Kingdom)))))
+intSent (Sent Goldilocks (VP4 (PVP1 SleptP (PP1 In (NP1 Three Bed)))))

@@ -47,6 +47,7 @@ intVP (VP1 tv np) =
 intVP (VP2 dv np1 np2) = 
   \ subj -> intNP np1 (\ iobj -> intNP np2 (\ dobj -> 
                          intDV dv subj iobj dobj))
+intVP (VP4 pvp) = intPVP pvp
 
 intTV :: TV -> Entity -> Entity -> Bool
 intTV Loved    = \ x y -> love x y
@@ -67,6 +68,8 @@ intCN Wizard   = \ x -> wizard x
 intCN Sword    = \ x -> sword x
 intCN Dagger   = \ x -> dagger x
 intCN Kingdom  = \ x -> kingdom x
+intCN Bed      = \ x -> bed x
+intCN Tower    = \ x -> tower x
 
 intDET :: DET -> 
          (Entity -> Bool) -> (Entity -> Bool) -> Bool
@@ -88,6 +91,8 @@ intDET Most p q = length pqlist > length (plist \\ qlist)
          plist  = filter p entities 
          qlist  = filter q entities 
          pqlist = filter q plist
+intDET Two p q = intDETN AtLeast 2 p q
+intDET Three p q = intDETN AtLeast 3 p q
 
 intDETN :: DET -> 
          Int -> (Entity -> Bool) -> (Entity -> Bool) -> Bool
@@ -106,13 +111,22 @@ intRCN (RCN2 cn _ np tv) =
 -- NEW STUFF: --
 intPCN :: PCN -> (Entity -> Bool)
 intPCN (PCN1 cn pp) = \ x -> ((intCN cn x) && (intPP pp x))
--- intRCN (RCN1 cn _ vp) = \ e -> ((intCN cn e) && (intVP vp e))
+
+intPVP :: PVP -> Entity -> Bool
+intPVP (PVP1 vp pp) = \ subj -> (intNP loc) (((intVPP vp) pr) subj)
+     where (PP1 pr loc) = pp
+
+intVPP :: VPP -> PR -> Entity -> Entity -> Bool
+intVPP LaughedP = \ pr -> \ subj -> \ loc -> laughPP pr subj loc
+intVPP CheeredP   = \ pr -> \ subj -> \ loc -> cheerPP pr subj loc 
+intVPP SleptP = \ pr -> \ subj -> \ loc -> sleepPP pr subj loc
+intVPP ShudderedP = \ pr -> \ subj -> \ loc -> shudderPP pr subj loc 
 
 intPP :: PP -> (Entity -> Bool)
-intPP (PP1 pr n) = \x -> intNP n (\ loc -> intPR pr x loc) -- adapted from intVP
--- intVP (VP1 tv np) = \ subj -> intNP np (\ obj -> intTV tv subj obj)
+intPP (PP1 pr n) = \ x -> intNP n (\ loc -> intPR pr x loc) -- adapted from intVP
+-- cf. intVP (VP1 tv np) = \ subj -> intNP np (\ obj -> intTV tv subj obj)
+-- intPP (PP2 vp pr n) = \ x -> intNP n (\ loc -> intPR pr x vp loc)
 
 intPR :: PR -> Entity -> Entity -> Bool -- adapted from intTV
--- intTV Loved    = \ x y -> love x y
-intPR NPIn = \ x y -> (inNP x y) -- the functions inNP and forNP are located in Model.hs
-intPR NPFor = \ x y -> (forNP x y)
+intPR In = \ x y -> (inNP x y)
+intPR For = \ x y -> (forNP x y)
