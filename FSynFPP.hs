@@ -41,7 +41,7 @@ data RCN  = RCN1 CN That VP | RCN2 CN That NP TV
           | RCN3 ADJ CN
           deriving Show
 data That = That deriving Show
-data VP   = Laughed | Cheered | Shuddered
+data VP   = Laughed | Cheered | Shuddered | Slept
           | VP1 TV NP | VP2 DV NP NP
           | VP3 AV To INF | VP4 PVP
           | COP1 BE PP  -- | COP2 BE ADJ | COP3 BE NP 

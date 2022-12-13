@@ -86,33 +86,34 @@ sleepList = [(W,In,WL),(G,In,B1),(G,In,B2),(G,In,B3)]
 cheerList = [(M,In,Unspec), (D,In,Unspec)]
 shudderList = [(S,In,Unspec)]
 
-laugh = \ x -> any (\ tr -> firstOfTriple tr == x) sleepList
-cheer = \ x -> any (\ tr -> firstOfTriple tr == x) cheerList
+laugh   = \ x -> any (\ tr -> firstOfTriple tr == x) laughList
+cheer   = \ x -> any (\ tr -> firstOfTriple tr == x) cheerList
+sleep   = \ x -> any (\ tr -> firstOfTriple tr == x) sleepList
 shudder = \ x -> any (\ tr -> firstOfTriple tr == x) shudderList
 
 laughPP, sleepPP, cheerPP, shudderPP :: PR -> Entity -> Entity -> Bool
-laughPP = \ pr subj loc -> curry3 (`elem` laughList) subj pr loc
-sleepPP = \ pr subj loc -> curry3 (`elem` sleepList) subj pr loc
-cheerPP = \ pr subj loc -> curry3 (`elem` cheerList) subj pr loc
+laughPP   = \ pr subj loc -> curry3 (`elem` laughList) subj pr loc
+sleepPP   = \ pr subj loc -> curry3 (`elem` sleepList) subj pr loc
+cheerPP   = \ pr subj loc -> curry3 (`elem` cheerList) subj pr loc
 shudderPP = \ pr subj loc -> curry3 (`elem` shudderList) subj pr loc
 
 love, admire, help, defeat :: TwoPlacePred
 
-loveList = [(Y,E,EmptyPR,Unspec),(B,S,EmptyPR,Unspec),(R,S,EmptyPR,Unspec)]
+loveList   = [(Y,E,EmptyPR,Unspec),(B,S,EmptyPR,Unspec),(R,S,EmptyPR,Unspec)]
 admireList = [(x,G,EmptyPR,Unspec) | x <- entities, person x]
-helpList = [(W,W,EmptyPR,Unspec),(V,V,EmptyPR,Unspec),(S,B,In,WL),(D,M,In,WL)]
+helpList   = [(W,W,EmptyPR,Unspec),(V,V,EmptyPR,Unspec),(S,B,In,WL),(D,M,In,WL)]
 defeatList = [(x,y,EmptyPR,Unspec) | x <- entities, y <- entities, dwarf x && giant y]
                     ++ [(A,W,In,WoL),(A,V,In,WoL)]
 
-love = \ x y -> any (\ quad -> firstTwoOfQuadruple quad == (x,y)) loveList
+love   = \ x y -> any (\ quad -> firstTwoOfQuadruple quad == (x,y)) loveList
 admire = \ x y -> any (\ quad -> firstTwoOfQuadruple quad == (x,y)) admireList
-help = \ x y -> any (\ quad -> firstTwoOfQuadruple quad == (x,y)) helpList
+help   = \ x y -> any (\ quad -> firstTwoOfQuadruple quad == (x,y)) helpList
 defeat = \ x y -> any (\ quad -> firstTwoOfQuadruple quad == (x,y)) defeatList
 
 lovePP, admirePP, helpPP, defeatPP :: Entity -> Entity -> PR -> Entity -> Bool
-lovePP = curry4 (`elem` loveList)
+lovePP   = curry4 (`elem` loveList)
 admirePP = curry4 (`elem` admireList)
-helpPP = curry4 (`elem` helpList)
+helpPP   = curry4 (`elem` helpList)
 -- "help x y" itself is True if there is some preposition PR and location "loc" 
 --  where (x,y,PR) is in this list
 defeatPP = curry4 (`elem` defeatList)

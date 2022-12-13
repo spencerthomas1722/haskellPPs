@@ -38,11 +38,12 @@ intNP (NP2 det rcn) = (intDET det) (intRCN rcn)
 intNP (NP3 det pcn) = (intDET det) (intPCN pcn)
 
 intVP :: VP -> Entity -> Bool 
-intVP Laughed   = \ x -> laugh x
-intVP Cheered   = \ x -> cheer x 
-intVP Shuddered = \ x -> shudder x 
+intVP Laughed      = \ x -> laugh x
+intVP Cheered      = \ x -> cheer x 
+intVP Slept        = \ x -> sleep x
+intVP Shuddered    = \ x -> shudder x 
 intVP (COP1 be pp) = \ subj -> intPP pp subj
-intVP (VP1 tv np) = 
+intVP (VP1 tv np)  = 
   \ subj -> intNP np (\ obj -> intTV tv subj obj)
 intVP (VP2 dv np1 np2) = 
   \ subj -> intNP np1 (\ iobj -> intNP np2 (\ dobj -> 
