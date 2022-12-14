@@ -8,7 +8,7 @@ data Entity = A | B | C | D | E | F | G
             | O | P | Q | R | S | T | U 
             | V | W | X | Y | Z | Unspec
             | WzL | WoL | Cam
-            | Mer
+            | Mer | CC
             | B1 | B2 | B3
      deriving (Eq,Show,Bounded,Enum)
 
@@ -24,6 +24,7 @@ goldilocks = G
 littleMook = M
 atreyu     = Y
 merlin     = Mer
+cheshirecat = CC
 wizardland = WzL
 wonderland = WoL
 oz = O
@@ -47,7 +48,7 @@ giant    = list2OnePlacePred [T]
 wizard   = list2OnePlacePred [W,V,Mer]
 sword    = list2OnePlacePred [F]
 dagger   = list2OnePlacePred [X]
-kingdom  = list2OnePlacePred [WzL, O, Cam]
+kingdom  = list2OnePlacePred [WzL, Cam]
 bed      = list2OnePlacePred [B1,B2,B3]
 tower    = list2OnePlacePred []
 
@@ -83,13 +84,13 @@ curry5 :: ((a,b,c,d,e) -> f) -> a -> b -> c -> d -> e -> f
 curry5 f x y z w u = f (x,y,z,w,u)
 
 laugh, cheer, shudder :: OnePlacePred
-laughList = [(A,In,WoL),(G,EmptyPR,Unspec),(E,EmptyPR,Unspec),(W,In,WzL)]
+laughList = [(A,In,WoL),(G,EmptyPR,Unspec),(E,EmptyPR,Unspec),(W,In,WzL),(V,In,O)]
 sleepList = [(W,In,WzL),(G,In,B1),(G,In,B2),(G,In,B3)]
 cheerList = [(M,In,Unspec), (D,In,Unspec)]
 shudderList = [(S,In,Unspec)]
 
 laugh   = \ x -> any (\ tr -> firstOfTriple tr == x) laughList
--- laugh   = list2OnePlacePred laughList
+-- laugh   = list2OnePlacePred [A,G,E,W]
 cheer   = \ x -> any (\ tr -> firstOfTriple tr == x) cheerList
 sleep   = \ x -> any (\ tr -> firstOfTriple tr == x) sleepList
 shudder = \ x -> any (\ tr -> firstOfTriple tr == x) shudderList
@@ -104,7 +105,7 @@ love, admire, help, defeat :: TwoPlacePred
 
 loveList   = [(Y,E,EmptyPR,Unspec),(B,S,EmptyPR,Unspec),(R,S,EmptyPR,Unspec)]
 admireList = [(x,G,EmptyPR,Unspec) | x <- entities, person x]
-helpList   = [(W,W,EmptyPR,Unspec),(V,V,EmptyPR,Unspec),(S,B,In,WzL),(D,M,In,WzL)]
+helpList   = [(W,W,EmptyPR,Unspec),(V,V,EmptyPR,Unspec),(S,B,In,WzL),(D,M,In,WzL),(CC,A,In,WoL)]
 defeatList = [(x,y,EmptyPR,Unspec) | x <- entities, y <- entities, dwarf x && giant y]
                     ++ [(A,W,In,WoL),(A,V,In,WoL)]
 
@@ -139,6 +140,6 @@ self ::  (a -> a -> b) -> a -> b
 self p = \ x -> p x x 
 
 inNP, forNP :: TwoPlacePred
-inNP   = curry (`elem` [(W, WzL), (V, WzL), (Mer, Cam)])
+inNP   = curry (`elem` [(V, WzL), (W, WzL), (Mer, Cam),(A,WoL),(CC,WoL)])
 -- inNP = W -> WzL -> True
 forNP  = curry (`elem` [(X, E)])

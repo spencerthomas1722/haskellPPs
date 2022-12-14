@@ -29,7 +29,7 @@ data Sent = Sent NP VP deriving Show
 data NP   = SnowWhite  | Alice  | Dorothy | Goldilocks 
           | LittleMook | Atreyu | Everyone | Someone
           | Wizardland | Wonderland | Camelot | Oz 
-          | Merlin
+          | Merlin | CheshireCat
           | NP1 DET CN | NP2 DET RCN | NP3 DET PCN
           | NP4 PNP
           deriving Show
@@ -63,10 +63,14 @@ data To   = To deriving Show
 
 -- NEW: --
 
-data VPP = LaughedP | CheeredP | ShudderedP | SleptP deriving Show
+
+data TVP = HelpedP | LovedP | AdmiredP deriving Show
+data VPP = LaughedP | CheeredP | ShudderedP | SleptP 
+          | VPP1 TVP NP
+          | TVP NP deriving Show
 data PCN = PCN1 CN PP deriving Show
 data PNP = PNP1 NP PP deriving Show
-data PVP = PVP1 VPP PP deriving Show
+data PVP = PVP1 VPP PP | PVP2 TVP NP PP deriving Show
 data PP = Here | There | PP1 PR NP deriving Show
 data PR = In | For | At | On | Over | Under | EmptyPR | Behind deriving (Show, Eq)
 

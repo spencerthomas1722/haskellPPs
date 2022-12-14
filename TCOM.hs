@@ -38,6 +38,7 @@ intNP Wonderland    = \ p -> p wonderland
 intNP Oz            = \ p -> p oz
 intNP Camelot       = \ p -> p camelot
 intNP Merlin        = \ p -> p merlin
+intNP CheshireCat   = \ p -> p cheshirecat
 intNP (NP1 det cn)  = (intDET det) (intCN cn) 
 intNP (NP2 det rcn) = (intDET det) (intRCN rcn) 
 intNP (NP3 det pcn) = (intDET det) (intPCN pcn)
@@ -98,6 +99,7 @@ intDET Most p q = length pqlist > length (plist \\ qlist)
          plist  = filter p entities 
          qlist  = filter q entities 
          pqlist = filter q plist
+
 intDET One p q = intDETN AtLeast 1 p q
 intDET Two p q = intDETN AtLeast 2 p q
 intDET Three p q = intDETN AtLeast 3 p q
@@ -128,12 +130,18 @@ intPNP (PNP1 np pp) = \ pred -> (intNP loc) (\ l -> intDET inDet (\ s -> intPR p
 intPVP :: PVP -> Entity -> Bool
 intPVP (PVP1 vp pp) = \ subj -> (intNP loc) (((intVPP vp) pr) subj)
      where (PP1 pr loc) = pp
+intPVP (PVP2 tvp np pp) = \ subj -> (intNP loc) (((intVPP (VPP1 tvp np)) pr) subj)
+     where (PP1 pr loc) = pp
 
 intVPP :: VPP -> PR -> Entity -> Entity -> Bool
--- intVPP LaughedP = \ pr -> \ subj -> \ loc -> laughPP pr subj loc
+intVPP LaughedP   = \ pr -> \ subj -> \ loc -> laughPP pr subj loc
 intVPP CheeredP   = \ pr -> \ subj -> \ loc -> cheerPP pr subj loc 
-intVPP SleptP = \ pr -> \ subj -> \ loc -> sleepPP pr subj loc
+intVPP SleptP     = \ pr -> \ subj -> \ loc -> sleepPP pr subj loc
 intVPP ShudderedP = \ pr -> \ subj -> \ loc -> shudderPP pr subj loc 
+intVPP (VPP1 tvp np) = \ pr -> \ subj -> \loc -> intNP np (\ obj -> intTVP tvp subj obj pr loc)
+ 
+intTVP :: TVP -> Entity -> Entity -> PR -> Entity -> Bool
+intTVP HelpedP = \ subj obj pr loc -> helpPP subj obj pr loc
 
 intPP :: PP -> (Entity -> Bool)
 intPP (PP1 pr n) = \ x -> intNP n (\ loc -> intPR pr x loc) -- adapted from intVP
