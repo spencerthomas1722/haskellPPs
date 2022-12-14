@@ -1,3 +1,8 @@
-intSent (Sent (NP1 Some Wizard) (VP4 (PVP1 SleptP (PP1 In (NP1 Some Kingdom)))))
-intSent (Sent Goldilocks Slept)
-intSent (Sent Goldilocks (VP4 (PVP1 SleptP (PP1 In (NP1 Three Bed)))))
+intSent (Sent (NP1 Some Wizard) (VP4 (PVP1 SleptP (PP1 In (NP1 Some Kingdom)))))  -- True
+intSent (Sent Goldilocks Slept)  -- True
+intSent (Sent Goldilocks (VP4 (PVP1 SleptP (PP1 In (NP1 Three Bed)))))  -- True
+
+laughList = [(A,In,Wonderland),(G,EmptyPR,Unspec),(E,EmptyPR,Unspec),(W,In,Wizardland)]
+inNP = curry (`elem` [(W, Wizardland), (V, Wizardland), (Merlin, Camelot)])
+intSent (Sent (NP3 Every (PCN1 Wizard (PP1 In (NP1 Some Kingdom)))) Laughed)  -- False
+intSent (Sent (NP4 (PNP1 (NP1 Every Wizard) (PP1 In (NP1 Some Kingdom)))) Laughed) -- True

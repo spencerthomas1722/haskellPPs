@@ -33,9 +33,15 @@ intNP Dorothy       = \ p -> p dorothy
 intNP Goldilocks    = \ p -> p goldilocks
 intNP LittleMook    = \ p -> p littleMook
 intNP Atreyu        = \ p -> p atreyu
+intNP Wizardland    = \ p -> p wizardland
+intNP Wonderland    = \ p -> p wonderland
+intNP Oz            = \ p -> p oz
+intNP Camelot       = \ p -> p camelot
+intNP Merlin        = \ p -> p merlin
 intNP (NP1 det cn)  = (intDET det) (intCN cn) 
 intNP (NP2 det rcn) = (intDET det) (intRCN rcn) 
 intNP (NP3 det pcn) = (intDET det) (intPCN pcn)
+intNP (NP4 pnp) = intPNP pnp
 
 intVP :: VP -> Entity -> Bool 
 intVP Laughed      = \ x -> laugh x
@@ -92,6 +98,7 @@ intDET Most p q = length pqlist > length (plist \\ qlist)
          plist  = filter p entities 
          qlist  = filter q entities 
          pqlist = filter q plist
+intDET One p q = intDETN AtLeast 1 p q
 intDET Two p q = intDETN AtLeast 2 p q
 intDET Three p q = intDETN AtLeast 3 p q
 
@@ -113,12 +120,17 @@ intRCN (RCN2 cn _ np tv) =
 intPCN :: PCN -> (Entity -> Bool)
 intPCN (PCN1 cn pp) = \ x -> ((intCN cn x) && (intPP pp x))
 
+intPNP :: PNP -> ((Entity -> Bool) -> Bool)
+intPNP (PNP1 np pp) = \ pred -> (intNP loc) (\ l -> intDET inDet (\ s -> intPR pr s l && intCN inCn s) pred)
+     where (PP1 pr loc) = pp
+           (NP1 inDet inCn) = np
+
 intPVP :: PVP -> Entity -> Bool
 intPVP (PVP1 vp pp) = \ subj -> (intNP loc) (((intVPP vp) pr) subj)
      where (PP1 pr loc) = pp
 
 intVPP :: VPP -> PR -> Entity -> Entity -> Bool
-intVPP LaughedP = \ pr -> \ subj -> \ loc -> laughPP pr subj loc
+-- intVPP LaughedP = \ pr -> \ subj -> \ loc -> laughPP pr subj loc
 intVPP CheeredP   = \ pr -> \ subj -> \ loc -> cheerPP pr subj loc 
 intVPP SleptP = \ pr -> \ subj -> \ loc -> sleepPP pr subj loc
 intVPP ShudderedP = \ pr -> \ subj -> \ loc -> shudderPP pr subj loc 
@@ -127,7 +139,12 @@ intPP :: PP -> (Entity -> Bool)
 intPP (PP1 pr n) = \ x -> intNP n (\ loc -> intPR pr x loc) -- adapted from intVP
 -- cf. intVP (VP1 tv np) = \ subj -> intNP np (\ obj -> intTV tv subj obj)
 -- intPP (PP2 vp pr n) = \ x -> intNP n (\ loc -> intPR pr x vp loc)
+-- intInversePP :: PP -> (Entity -> Bool) -> Bool
+-- intInversePP (PP1 pr n) = \ x -> \ pred -> intNP n ((\ loc -> intPR pr loc x) && pred n)
 
 intPR :: PR -> Entity -> Entity -> Bool -- adapted from intTV
 intPR In = \ x y -> (inNP x y)
 intPR For = \ x y -> (forNP x y)
+
+-- swapScope :: PR -> PR
+-- swapScope twoplace = \ x -> \ y -> twoplace y x

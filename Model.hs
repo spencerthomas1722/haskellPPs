@@ -7,15 +7,15 @@ data Entity = A | B | C | D | E | F | G
             | H | I | J | K | L | M | N 
             | O | P | Q | R | S | T | U 
             | V | W | X | Y | Z | Unspec
-            | WL | WoL | Oz
+            | WzL | WoL | Cam
+            | Mer
             | B1 | B2 | B3
      deriving (Eq,Show,Bounded,Enum)
 
 entities :: [Entity]
 entities =  [minBound..maxBound] 
 
-snowWhite, alice, dorothy, goldilocks, littleMook, atreyu, wizardland
-                                                :: Entity
+snowWhite, alice, dorothy, goldilocks, littleMook, atreyu, wizardland, wonderland, oz, camelot :: Entity
 
 snowWhite  = S
 alice      = A
@@ -23,9 +23,11 @@ dorothy    = D
 goldilocks = G 
 littleMook = M
 atreyu     = Y
-wizardland = WL
+merlin     = Mer
+wizardland = WzL
 wonderland = WoL
-oz = Oz
+oz = O
+camelot = Cam
 
 type OnePlacePred   = Entity -> Bool
 type TwoPlacePred   = Entity -> Entity -> Bool
@@ -42,10 +44,10 @@ boy      = list2OnePlacePred [M,Y]
 princess = list2OnePlacePred [E]
 dwarf    = list2OnePlacePred [B,R]
 giant    = list2OnePlacePred [T]
-wizard   = list2OnePlacePred [W,V]
+wizard   = list2OnePlacePred [W,V,Mer]
 sword    = list2OnePlacePred [F]
 dagger   = list2OnePlacePred [X]
-kingdom  = list2OnePlacePred [WL]
+kingdom  = list2OnePlacePred [WzL, O, Cam]
 bed      = list2OnePlacePred [B1,B2,B3]
 tower    = list2OnePlacePred []
 
@@ -81,17 +83,18 @@ curry5 :: ((a,b,c,d,e) -> f) -> a -> b -> c -> d -> e -> f
 curry5 f x y z w u = f (x,y,z,w,u)
 
 laugh, cheer, shudder :: OnePlacePred
-laughList = [(A,In,WoL),(G,EmptyPR,Unspec),(E,EmptyPR,Unspec),(W,In,WL)]
-sleepList = [(W,In,WL),(G,In,B1),(G,In,B2),(G,In,B3)]
+laughList = [(A,In,WoL),(G,EmptyPR,Unspec),(E,EmptyPR,Unspec),(W,In,WzL)]
+sleepList = [(W,In,WzL),(G,In,B1),(G,In,B2),(G,In,B3)]
 cheerList = [(M,In,Unspec), (D,In,Unspec)]
 shudderList = [(S,In,Unspec)]
 
 laugh   = \ x -> any (\ tr -> firstOfTriple tr == x) laughList
+-- laugh   = list2OnePlacePred laughList
 cheer   = \ x -> any (\ tr -> firstOfTriple tr == x) cheerList
 sleep   = \ x -> any (\ tr -> firstOfTriple tr == x) sleepList
 shudder = \ x -> any (\ tr -> firstOfTriple tr == x) shudderList
 
-laughPP, sleepPP, cheerPP, shudderPP :: PR -> Entity -> Entity -> Bool
+sleepPP, cheerPP, shudderPP :: PR -> Entity -> Entity -> Bool
 laughPP   = \ pr subj loc -> curry3 (`elem` laughList) subj pr loc
 sleepPP   = \ pr subj loc -> curry3 (`elem` sleepList) subj pr loc
 cheerPP   = \ pr subj loc -> curry3 (`elem` cheerList) subj pr loc
@@ -101,7 +104,7 @@ love, admire, help, defeat :: TwoPlacePred
 
 loveList   = [(Y,E,EmptyPR,Unspec),(B,S,EmptyPR,Unspec),(R,S,EmptyPR,Unspec)]
 admireList = [(x,G,EmptyPR,Unspec) | x <- entities, person x]
-helpList   = [(W,W,EmptyPR,Unspec),(V,V,EmptyPR,Unspec),(S,B,In,WL),(D,M,In,WL)]
+helpList   = [(W,W,EmptyPR,Unspec),(V,V,EmptyPR,Unspec),(S,B,In,WzL),(D,M,In,WzL)]
 defeatList = [(x,y,EmptyPR,Unspec) | x <- entities, y <- entities, dwarf x && giant y]
                     ++ [(A,W,In,WoL),(A,V,In,WoL)]
 
@@ -121,7 +124,7 @@ defeatPP = curry4 (`elem` defeatList)
 give, kill :: ThreePlacePred
 
 giveList = [(T,S,X,In,Unspec),(A,E,S,In,Unspec)]
-killList = [(Y,T,F,EmptyPR,Unspec),(Unspec,D,X,In,Oz), (Unspec,M,Unspec,EmptyPR,Unspec)]
+killList = [(Y,T,F,EmptyPR,Unspec),(Unspec,D,X,In,O), (Unspec,M,Unspec,EmptyPR,Unspec)]
 
 give = \ x y z -> any (\ quin -> firstThreeOfQuintuple quin == (x,y,z)) giveList
 kill = \ x y z -> any (\ quin -> firstThreeOfQuintuple quin == (x,y,z)) killList
@@ -136,6 +139,6 @@ self ::  (a -> a -> b) -> a -> b
 self p = \ x -> p x x 
 
 inNP, forNP :: TwoPlacePred
-inNP   = curry (`elem` [(W, WL), (V, WL)])
--- inNP = W -> WL -> True
+inNP   = curry (`elem` [(W, WzL), (V, WzL), (Mer, Cam)])
+-- inNP = W -> WzL -> True
 forNP  = curry (`elem` [(X, E)])

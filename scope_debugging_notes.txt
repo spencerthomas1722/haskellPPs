@@ -1,0 +1,31 @@
+intSent (Sent (NP4 (PNP1 (NP1 Every Wizard) (PP1 In (NP1 Some Kingdom)))) Laughed) -- True
+(intNP (NP4 (PNP1 (NP1 Every Wizard) (PP1 In (NP1 Some Kingdom))))) (intVP Laughed)
+(intPNP (NP1 Every Wizard) (PP1 In (NP1 Some Kingdom))) (\ x -> laugh x)
+(\ pred -> (intNP loc) (intPP pp)) (\ x -> any (\ tr -> firstOfTriple tr == x) laughList)
+
+(intNP loc) (\ l -> intDET inDet (\ s -> intPR pr s l && intCN inCn s)
+(\ q -> any q (filter kingdom entities)) (\ l -> all pred (filter (\ s -> -> intPR pr s l && intCN inCn s) entities))
+(\ pred -> any (\ l -> all pred (filter (\ s -> intPR pr s l && intCN inCn s) entities)) (filter kingdom entities)) (\ x -> any (\ tr -> firstOfTriple tr == x) laughList)
+
+any (\ l -> all (\ x -> any (\ tr -> firstOfTriple tr == x) laughList) (filter (\ s -> in s l && wizard s) entities)) (filter kingdom entities)
+
+when i reverted the definition of `laugh` back to `laugh = list2OnePlacePred [A,G,E,W]`, this remained True. when i changed `Some Kingdom` to `Wizardland` (the kingdom in question), it returns False. so the issue is with the interpretation of `Some Kingdom`. will continue investigating.
+
+(intPNP (PNP1 (NP1 Every Wizard) (PP1 In Wizardland))) (\ x -> laugh x)
+(\ pred -> (intNP Wizardland) (\ l -> intDET Every (\ s -> intPR In s l && intCN Wizard s) pred)) (\ x -> laugh x)
+(\ pred -> (\ p -> p wizardland) (\ l -> all pred (filter (\ s -> in s l && wizard s) entities))) (\ x -> laugh x)
+(\ pred -> (\ l -> all pred (filter (\ s -> in s l && wizard s) entities)) wizardland) (\ x -> laugh x)
+(\ pred -> (all pred (filter (\ s -> in s wizardland && wizard s) entities))) (\ x -> laugh x)
+all (\ x -> laugh x) (filter (\ s -> in s wizardland && wizard s) entities)
+
+(intPNP (PNP1 (NP1 Every Wizard) (PP1 In (NP1 One Kingdom)))) (\ x -> laugh x)
+(\ pred -> (intNP One Kingdom) (\ l -> intDET Every (\ s -> intPR In s l && intCN Wizard s) pred)) (\ x -> laugh x)
+(\ pred -> (intDETN AtLeast 1 (kingdom) q) (\ l -> intDET Every (\ s -> intPR In s l && intCN Wizard s) pred)) (\ x -> laugh x)
+(\ pred -> (length (filter q (filter (kingdom) entities)) >= n) (\ l -> intDET Every (\ s -> intPR In s l && intCN Wizard s) pred)) (\ x -> laugh x)
+(\ pred -> length (filter (\ l -> intDET Every (\ s -> intPR In s l && intCN Wizard s) pred) (filter (kingdom) entities)) >= n) (\ x -> laugh x)
+(\ pred -> length (filter (\ l -> all pred (filter (\ s -> in s l && wizard s) entities)) (filter kingdom entities)) >= n) (\ x -> laugh x)
+length (filter (\ l -> all (\ x -> laugh x) (filter (\ s -> in s l && wizard s) entities)) (filter kingdom entities)) >= 1
+
+length (filter (\ l -> all (\ x -> laugh x) (filter (\ s -> in s l          && wizard s) entities)) (filter kingdom entities)) >= 1  -- True
+           any (\ l -> all (\ x -> laugh x) (filter (\ s -> in s l          && wizard s) entities)) (filter kingdom entities)  -- True
+                       all (\ x -> laugh x) (filter (\ s -> in s wizardland && wizard s) entities)  -- False
