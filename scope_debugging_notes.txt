@@ -26,6 +26,13 @@ all (\ x -> laugh x) (filter (\ s -> in s wizardland && wizard s) entities)
 (\ pred -> length (filter (\ l -> all pred (filter (\ s -> in s l && wizard s) entities)) (filter kingdom entities)) >= n) (\ x -> laugh x)
 length (filter (\ l -> all (\ x -> laugh x) (filter (\ s -> in s l && wizard s) entities)) (filter kingdom entities)) >= 1
 
+The following sentences correspond to:
+intSent (Sent (NP4 (intPNP (PNP1 (NP1 Every Wizard) (PP1 In (NP1 One Kingdom))))) Laughed)
+intSent (Sent (NP4 (intPNP (PNP1 (NP1 Every Wizard) (PP1 In (NP1 Some Kingdom))))) Laughed)
+intSent (Sent (NP4 (intPNP (PNP1 (NP1 Every Wizard) (PP1 In Wizardland)))) Laughed)
+All of them should be False. The comment after each shows its truth value (according to Haskell).
 length (filter (\ l -> all (\ x -> laugh x) (filter (\ s -> in s l          && wizard s) entities)) (filter kingdom entities)) >= 1  -- True
            any (\ l -> all (\ x -> laugh x) (filter (\ s -> in s l          && wizard s) entities)) (filter kingdom entities)  -- True
                        all (\ x -> laugh x) (filter (\ s -> in s wizardland && wizard s) entities)  -- False
+                       
+The difference in answers indicates to me that the issue is probably something with `filter`, or both `filter` and `any`.
