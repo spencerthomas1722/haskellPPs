@@ -31,15 +31,15 @@ data NP   = SnowWhite  | Alice  | Dorothy | Goldilocks
           | Wizardland | Wonderland | Camelot | Oz 
           | Merlin | CheshireCat
           | NP1 DET CN | NP2 DET RCN | NP3 DET PCN
-          | NP4 PNP
+          | NP4 PNP | NP5 DET ACN
           deriving Show
 data DET  = The | Every | Some | No | Most | AtLeast | AtMost | One | Two | Three
           deriving Show
 data CN   = Girl   | Boy   | Princess | Dwarf | Giant 
           | Wizard | Sword | Dagger | Kingdom | Bed | Tower
-          | CNP CN PP  -- CNP CN PP new
+          | CNP CN PP | ACN ADJ CN -- CNP CN PP new
           deriving Show 
-data ADJ  = Fake deriving Show
+-- ADJ has been moved to the "NEW" section below
 data RCN  = RCN1 CN That VP | RCN2 CN That NP TV
           | RCN3 ADJ CN
           deriving Show
@@ -47,7 +47,7 @@ data That = That deriving Show
 data VP   = Laughed | Cheered | Shuddered | Slept
           | VP1 TV NP | VP2 DV NP NP
           | VP3 AV To INF | VP4 PVP
-          | COP1 BE PP  -- | COP2 BE ADJ | COP3 BE NP 
+          | COP1 BE PP | COP2 BE ADJ | COP3 BE NP 
           deriving Show 
 data TV   = Loved   | Admired | Helped 
           | Defeated | Caught
@@ -63,16 +63,18 @@ data To   = To deriving Show
 
 -- NEW: --
 
-
 data TVP = HelpedP | LovedP | AdmiredP deriving Show
 data VPP = LaughedP | CheeredP | ShudderedP | SleptP 
-          | VPP1 TVP NP
+          | VPP1 TVP NP  -- TODO rewrite as VPP1 TV PP?
           | TVP NP deriving Show
 data PCN = PCN1 CN PP deriving Show
 data PNP = PNP1 NP PP deriving Show
 data PVP = PVP1 VPP PP | PVP2 TVP NP PP deriving Show
 data PP = Here | There | PP1 PR NP deriving Show
 data PR = In | For | At | On | Over | Under | EmptyPR | Behind deriving (Show, Eq)
+
+data ADJ = Dwarven | Human | Female | Male | Sharp | Fake deriving Show
+data ACN = ACN1 ADJ CN deriving Show
 
 -- /NEW --
 

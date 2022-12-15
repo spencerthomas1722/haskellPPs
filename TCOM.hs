@@ -41,21 +41,24 @@ intNP Merlin        = \ p -> p merlin
 intNP CheshireCat   = \ p -> p cheshirecat
 intNP (NP1 det cn)  = (intDET det) (intCN cn) 
 intNP (NP2 det rcn) = (intDET det) (intRCN rcn) 
-intNP (NP3 det pcn) = (intDET det) (intPCN pcn)
-intNP (NP4 pnp) = intPNP pnp
+intNP (NP3 det pcn) = (intDET det) (intPCN pcn)  -- cn with pp adjunct
+intNP (NP4 pnp) = intPNP pnp  -- full np with pp adjunct
+intNP (NP5 det acn) = (intDET det) (intACN acn)
 
 intVP :: VP -> Entity -> Bool 
-intVP Laughed      = \ x -> laugh x
-intVP Cheered      = \ x -> cheer x 
-intVP Slept        = \ x -> sleep x
-intVP Shuddered    = \ x -> shudder x 
-intVP (COP1 be pp) = \ subj -> intPP pp subj
-intVP (VP1 tv np)  = 
+intVP Laughed       = \ x -> laugh x
+intVP Cheered       = \ x -> cheer x 
+intVP Slept         = \ x -> sleep x
+intVP Shuddered     = \ x -> shudder x 
+intVP (COP1 be pp)  = \ subj -> intPP pp subj
+intVP (COP2 be adj) = \ subj -> intADJ adj subj
+intVP (COP3 be np)  = \ subj -> intNP np (== subj)
+intVP (VP1 tv np)   = 
   \ subj -> intNP np (\ obj -> intTV tv subj obj)
 intVP (VP2 dv np1 np2) = 
   \ subj -> intNP np1 (\ iobj -> intNP np2 (\ dobj -> 
                          intDV dv subj iobj dobj))
-intVP (VP4 pvp) = intPVP pvp
+intVP (VP4 pvp)     = intPVP pvp
 
 intTV :: TV -> Entity -> Entity -> Bool
 intTV Loved    = \ x y -> love x y
@@ -147,12 +150,18 @@ intPP :: PP -> (Entity -> Bool)
 intPP (PP1 pr n) = \ x -> intNP n (\ loc -> intPR pr x loc) -- adapted from intVP
 -- cf. intVP (VP1 tv np) = \ subj -> intNP np (\ obj -> intTV tv subj obj)
 -- intPP (PP2 vp pr n) = \ x -> intNP n (\ loc -> intPR pr x vp loc)
--- intInversePP :: PP -> (Entity -> Bool) -> Bool
--- intInversePP (PP1 pr n) = \ x -> \ pred -> intNP n ((\ loc -> intPR pr loc x) && pred n)
 
 intPR :: PR -> Entity -> Entity -> Bool -- adapted from intTV
 intPR In = \ x y -> (inNP x y)
 intPR For = \ x y -> (forNP x y)
 
--- swapScope :: PR -> PR
--- swapScope twoplace = \ x -> \ y -> twoplace y x
+intACN :: ACN -> (Entity -> Bool)
+intACN (ACN1 adj cn) = \ x -> ((intCN cn x) && (intADJ adj x))
+
+intADJ :: ADJ -> Entity -> Bool
+intADJ Dwarven = \ x -> dwarf x
+intADJ Human   = \ x -> human x
+intADJ Female  = \ x -> female x
+intADJ Male    = \ x -> male x
+intADJ Sharp   = \ x -> sharp x
+intADJ Fake    = \ x -> fake x  -- had to add this since van Eijck and Unger did --- currently leads to an empty list

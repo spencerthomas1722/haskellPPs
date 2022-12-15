@@ -65,6 +65,11 @@ thing  = \ x -> not (person x || x == Unspec)
 
 -- New/altered stuff --
 
+dwarven = \ x -> dwarf x
+human   = \ x -> not (dwarf x || giant x || thing x)
+sharp   = list2OnePlacePred [X]
+fake    = list2OnePlacePred []
+
 firstOfTriple :: (a, b, c) -> a
 firstOfTriple (x, _, _) = x
 
