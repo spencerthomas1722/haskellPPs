@@ -7,7 +7,7 @@ data Entity = A | B | C | D | E | F | G
             | H | I | J | K | L | M | N 
             | O | P | Q | R | S | T | U 
             | V | W | X | Y | Z | Unspec
-            | WzL | WoL | Cam
+            | WzL | WoL | Cam | Tow
             | Mer | CC
             | B1 | B2 | B3
      deriving (Eq,Show,Bounded,Enum)
@@ -50,7 +50,7 @@ sword    = list2OnePlacePred [F]
 dagger   = list2OnePlacePred [X]
 kingdom  = list2OnePlacePred [WzL, Cam]
 bed      = list2OnePlacePred [B1,B2,B3]
-tower    = list2OnePlacePred []
+tower    = list2OnePlacePred [Tow]
 
 child, person, man, woman, male, female, thing :: OnePlacePred
 
@@ -145,6 +145,5 @@ self ::  (a -> a -> b) -> a -> b
 self p = \ x -> p x x 
 
 inNP, forNP :: TwoPlacePred
-inNP   = curry (`elem` [(V, WzL), (W, WzL), (Mer, Cam),(A,WoL),(CC,WoL)])
--- inNP = W -> WzL -> True
+inNP   = curry (`elem` [(V, Tow), (W, WzL), (Mer, Cam), (A, WoL), (CC, WoL), (Tow, WzL)])
 forNP  = curry (`elem` [(X, E)])

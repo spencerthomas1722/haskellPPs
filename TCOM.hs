@@ -152,8 +152,9 @@ intPP (PP1 pr n) = \ x -> intNP n (\ loc -> intPR pr x loc) -- adapted from intV
 -- intPP (PP2 vp pr n) = \ x -> intNP n (\ loc -> intPR pr x vp loc)
 
 intPR :: PR -> Entity -> Entity -> Bool -- adapted from intTV
-intPR In = \ x y -> (inNP x y)
-intPR For = \ x y -> (forNP x y)
+intPR In x y | inNP x y = True
+             | otherwise = any (\ l -> inNP x l) (filter (\ z -> inNP x z) entities)
+intPR For x y = (forNP x y)
 
 intACN :: ACN -> (Entity -> Bool)
 intACN (ACN1 adj cn) = \ x -> ((intCN cn x) && (intADJ adj x))
