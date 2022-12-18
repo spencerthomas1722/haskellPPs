@@ -11,7 +11,8 @@ data Entity = A | B | C | D | E | F | G
             | Mer | CC | WK | WQ | RK | RQ
             | MB | PB | BB
             | B1 | B2 | B3
-            | Gan
+            | Gan | WOz | GF | MF | DK
+            | AM | DM
      deriving (Eq,Show,Bounded,Enum)
 
 entities :: [Entity]
@@ -39,6 +40,10 @@ mamabear = MB
 papabear = PB
 babybear = BB
 gandalf  = Gan
+wizardofoz = WOz
+grizzlyforest = GF
+magicforest = MF
+doorknob      = DK
 
 type OnePlacePred   = Entity -> Bool
 type TwoPlacePred   = Entity -> Entity -> Bool
@@ -47,17 +52,19 @@ type ThreePlacePred = Entity -> Entity -> Entity -> Bool
 list2OnePlacePred :: [Entity] -> OnePlacePred
 list2OnePlacePred xs = \ x -> elem x xs
 
-girl, boy, king, queen, princess, dwarf, giant, wizard, sword, dagger, kingdom, bed, tower, bear
+girl, boy, woman, man, king, queen, princess, dwarf, giant, wizard, sword, dagger, kingdom, bed, tower, bear, gift
                                          :: OnePlacePred
 
 girl     = list2OnePlacePred [S,A,D,G]
 boy      = list2OnePlacePred [M,Y]
+woman    = list2OnePlacePred [RQ,WQ,E,T,R,W,V]
+man      = list2OnePlacePred [RK,WK,B,R,V,Mer,Gan,WOz]
 king     = list2OnePlacePred [RK,WK]
 queen    = list2OnePlacePred [RQ,WQ]
 princess = list2OnePlacePred [E]
 dwarf    = list2OnePlacePred [B,R]
 giant    = list2OnePlacePred [T]
-wizard   = list2OnePlacePred [W,V,Mer,Gan]
+wizard   = list2OnePlacePred [W,V,Mer,Gan,WOz]
 sword    = list2OnePlacePred [F]
 dagger   = list2OnePlacePred [X]
 kingdom  = list2OnePlacePred [WzL,Cam]
@@ -67,17 +74,19 @@ bear     = list2OnePlacePred [MB,PB,BB]
 mama     = list2OnePlacePred [MB]
 papa     = list2OnePlacePred [PB]
 baby     = list2OnePlacePred [BB]
+forest   = list2OnePlacePred [GF,MF]
+gift     = list2OnePlacePred [AM,DM]
+knob     = list2OnePlacePred [DK]
 
-child, person, man, woman, male, female, thing :: OnePlacePred
+child, person, male, female, thing :: OnePlacePred
 
 child  = \ x -> (girl x  || boy x)
 person = \ x -> (child x || princess x || dwarf x 
                          || giant x    || wizard x) 
-man    = \ x -> (dwarf x || giant x || wizard x || king x) 
-woman  = \ x -> (princess x || queen x)
 male   = \ x -> (man x || boy x) 
 female = \ x -> (woman x || girl x)
-thing  = \ x -> not (person x || x == Unspec)
+thing  = \ x -> (not (person x || x == Unspec)) || knob x
+place  = \ x -> (forest x || kingdom x)
 
 -- New/altered stuff --
 
@@ -106,30 +115,35 @@ curry5 :: ((a,b,c,d,e) -> f) -> a -> b -> c -> d -> e -> f
 curry5 f x y z w u = f (x,y,z,w,u)
 
 laugh, cheer, shudder :: OnePlacePred
-laughList = [(A,In,WoL),(G,EmptyPR,Unspec),(E,EmptyPR,Unspec),(W,In,WzL),(V,In,O)]
-sleepList = [(W,In,WzL),(G,In,B1),(G,In,B2),(G,In,B3),(MB,In,B1),(PB,In,B2),(BB,In,B3)]
-cheerList = [(M,EmptyPR,Unspec), (D,In,O)]
-shudderList = [(S,EmptyPR,Unspec),(W,In,WzL)]
+laughList   = [(A,In,WoL),(G,EmptyPR,Unspec),(E,EmptyPR,Unspec),(W,In,WzL),(V,In,O)]
+sleepList   = [(W,In,WzL),(G,In,B1),(G,In,B2),(G,In,B3),(MB,In,B1),(PB,In,B2),(BB,In,B3)]
+cheerList   = [(M,EmptyPR,Unspec),(D,In,O)]
+shudderList = [(S,EmptyPR,Unspec),(W,In,WzL),(Gan,EmptyPR,Unspec),(Mer,Under,Cam)]
+cryList     = [(D,In,O),(MB,EmptyPR,Unspec)]
 
 laugh   = \ x -> any (\ tr -> firstOfTriple tr == x) laughList
 -- laugh   = list2OnePlacePred [A,G,E,W]
-cheer   = \ x -> any (\ tr -> firstOfTriple tr == x) cheerList
 sleep   = \ x -> any (\ tr -> firstOfTriple tr == x) sleepList
+cheer   = \ x -> any (\ tr -> firstOfTriple tr == x) cheerList
 shudder = \ x -> any (\ tr -> firstOfTriple tr == x) shudderList
+cry     = \ x -> any (\ tr -> firstOfTriple tr == x) cryList
 
 sleepPP, cheerPP, shudderPP :: PR -> Entity -> Entity -> Bool
 laughPP   = \ pr subj loc -> curry3 (`elem` laughList) subj pr loc
 sleepPP   = \ pr subj loc -> curry3 (`elem` sleepList) subj pr loc
 cheerPP   = \ pr subj loc -> curry3 (`elem` cheerList) subj pr loc
 shudderPP = \ pr subj loc -> curry3 (`elem` shudderList) subj pr loc
+cryPP     = \ pr subj loc -> curry3 (`elem` cryList) subj pr loc
 
 love, admire, help, defeat :: TwoPlacePred
 
-loveList   = [(Y,E,EmptyPR,Unspec),(B,S,EmptyPR,Unspec),(R,S,EmptyPR,Unspec)]
-admireList = [(x,G,EmptyPR,Unspec) | x <- entities, person x]
-helpList   = [(W,W,EmptyPR,Unspec),(V,V,EmptyPR,Unspec),(S,B,In,WzL),(D,M,In,WzL),(CC,A,In,WoL)]
+loveList   = [(Y,E,EmptyPR,Unspec),(B,S,EmptyPR,Unspec),(R,S,EmptyPR,Unspec), (MB,PB,EmptyPR,Unspec),(PB,MB,EmptyPR,Unspec),(MB,BB,EmptyPR,Unspec),(BB,MB,EmptyPR,Unspec), (PB,BB,EmptyPR,Unspec),(BB,PB,EmptyPR,Unspec),(Gan,Mer,EmptyPR,Unspec)]
+-- loveList has no PRs/locations because these people's love transcends time and space ^_^
+admireList = [(x,G,EmptyPR,Unspec) | x <- entities, person x] ++ [(BB,MB,EmptyPR,Unspec), (BB,PB,EmptyPR,Unspec)]
+helpList   = [(W,W,EmptyPR,Unspec),(V,V,EmptyPR,Unspec),(S,B,In,WzL),(D,M,In,WzL),(CC,A,In,WoL),(WOz,D,In,O),(B,S,In,MF),(R,S,In,MF)]
 defeatList = [(x,y,EmptyPR,Unspec) | x <- entities, y <- entities, dwarf x && giant y]
-                    ++ [(A,W,In,WoL),(A,V,In,WoL)]
+                    ++ [(A,W,In,WoL),(A,V,In,WoL),(PB,G,In,GF),(MB,G,In,GF),
+                        (BB,G,In,GF)]
 
 love   = \ x y -> any (\ quad -> firstTwoOfQuadruple quad == (x,y)) loveList
 admire = \ x y -> any (\ quad -> firstTwoOfQuadruple quad == (x,y)) admireList
@@ -146,8 +160,9 @@ defeatPP = curry4 (`elem` defeatList)
 
 give, kill :: ThreePlacePred
 
-giveList = [(T,S,X,In,Unspec),(A,E,S,In,Unspec)]
-killList = [(Y,T,F,EmptyPR,Unspec),(Unspec,D,X,In,O), (Unspec,M,Unspec,EmptyPR,Unspec)]
+giveList = [(T,S,X,In,Unspec),(A,E,S,In,Unspec),(E,Y,AM,In,MF),(Unspec,A,DM,EmptyPR,Unspec)]
+killList = [(Y,T,F,EmptyPR,Unspec),(Unspec,D,X,In,O),(Unspec,M,Unspec,EmptyPR,Unspec),
+            (MB,G,MB,In,GF),(PB,G,PB,In,GF)]
 
 give = \ x y z -> any (\ quin -> firstThreeOfQuintuple quin == (x,y,z)) giveList
 kill = \ x y z -> any (\ quin -> firstThreeOfQuintuple quin == (x,y,z)) killList
@@ -162,10 +177,11 @@ self ::  (a -> a -> b) -> a -> b
 self p = \ x -> p x x 
 
 inNP, forNP, ofNP, underNP :: TwoPlacePred
-inNP   = curry (`elem` [(V, Tow), (W, WzL), (Mer, Cam), (A, WoL), (CC, WoL), (Tow, WzL)])
+inNP   = curry (`elem` [(V,Tow),(W,WzL),(Mer,Cam),(A,WoL),(CC,WoL),(Tow,WzL)])
 forNP  = curry (`elem` [(X, E)])
-ofNP   = curry (`elem` [])
-underNP = curry (`elem` [])
+fromNP = curry (`elem` [(V,WzL),(W,WzL),(WOz,O),(B,MF),(R,MF),(BB,GF)])
+ofNP   = \ x y -> (elem (x,y) [(Mer,Cam),(MB,GF),(PB,GF),(RQ,WoL),(RK,WoL),(WQ,WoL),(WK,WoL)]) || fromNP x y
+underNP = curry (`elem` [(Mer,Cam)])
 
 betweenNP :: ThreePlacePred
-betweenNP = curry3 (`elem` [(A,WQ,RQ)]) -- implies reverse as well
+betweenNP = curry3 (`elem` [(A,WQ,RQ),(RQ,A,RK)]) -- implies reverse as well; see TCOM
