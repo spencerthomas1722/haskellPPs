@@ -29,7 +29,9 @@ data Sent = Sent NP VP deriving Show
 data NP   = SnowWhite  | Alice  | Dorothy | Goldilocks 
           | LittleMook | Atreyu | Everyone | Someone
           | Wizardland | Wonderland | Camelot | Oz 
-          | Merlin | CheshireCat
+          | Merlin | CheshireCat | RedKing | RedQueen
+          | WhiteKing | WhiteQueen | MamaBear | PapaBear
+          | BabyBear | Gandalf
           | NP1 DET CN | NP2 DET RCN | NP3 DET PCN
           | NP4 PNP | NP5 DET ACN
           deriving Show
@@ -38,6 +40,7 @@ data DET  = The | Every | Some | No | Most | AtLeast | AtMost | One | Two | Thre
 data CN   = Girl   | Boy   | Princess | Dwarf | Giant 
           | Wizard | Sword | Dagger | Kingdom | Bed | Tower
           | CNP CN PP | ACN ADJ CN -- CNP CN PP new
+          | King | Queen | Bear
           deriving Show 
 -- ADJ has been moved to the "NEW" section below
 data RCN  = RCN1 CN That VP | RCN2 CN That NP TV
@@ -70,10 +73,12 @@ data VPP = LaughedP | CheeredP | ShudderedP | SleptP
 data PCN = PCN1 CN PP deriving Show
 data PNP = PNP1 NP PP deriving Show
 data PVP = PVP1 VPP PP | PVP2 TVP NP PP deriving Show
-data PP = Here | There | PP1 PR NP deriving Show
-data PR = In | For | At | On | Over | Under | EmptyPR | Behind deriving (Show, Eq)
+data PP = Here | There | PP1 PR NP | PP2 TPR NP And NP deriving Show
+data TPR = Between | Betwixt deriving Show
+data And = And deriving Show
+data PR = In | For | Of | At | On | Over | Under | EmptyPR | Behind deriving (Show, Eq)
 
-data ADJ = Dwarven | Human | Female | Male | Sharp | Fake deriving Show
+data ADJ = Dwarven | Human | Female | Male | Sharp | Fake | Mama | Papa | Baby deriving Show
 data ACN = ACN1 ADJ CN deriving Show
 
 -- /NEW --

@@ -8,14 +8,16 @@ data Entity = A | B | C | D | E | F | G
             | O | P | Q | R | S | T | U 
             | V | W | X | Y | Z | Unspec
             | WzL | WoL | Cam | Tow
-            | Mer | CC
+            | Mer | CC | WK | WQ | RK | RQ
+            | MB | PB | BB
             | B1 | B2 | B3
+            | Gan
      deriving (Eq,Show,Bounded,Enum)
 
 entities :: [Entity]
 entities =  [minBound..maxBound] 
 
-snowWhite, alice, dorothy, goldilocks, littleMook, atreyu, wizardland, wonderland, oz, camelot :: Entity
+snowWhite, alice, dorothy, goldilocks, littleMook, atreyu, wizardland, wonderland, oz, camelot, redking, redqueen, whiteking, whitequeen, mamabear, papabear, babybear :: Entity
 
 snowWhite  = S
 alice      = A
@@ -29,6 +31,14 @@ wizardland = WzL
 wonderland = WoL
 oz = O
 camelot = Cam
+redking = RK
+redqueen = RQ
+whiteking = WK
+whitequeen = WQ
+mamabear = MB
+papabear = PB
+babybear = BB
+gandalf  = Gan
 
 type OnePlacePred   = Entity -> Bool
 type TwoPlacePred   = Entity -> Entity -> Bool
@@ -37,28 +47,34 @@ type ThreePlacePred = Entity -> Entity -> Entity -> Bool
 list2OnePlacePred :: [Entity] -> OnePlacePred
 list2OnePlacePred xs = \ x -> elem x xs
 
-girl, boy, princess, dwarf, giant, wizard, sword, dagger, kingdom, bed, tower
+girl, boy, king, queen, princess, dwarf, giant, wizard, sword, dagger, kingdom, bed, tower, bear
                                          :: OnePlacePred
 
 girl     = list2OnePlacePred [S,A,D,G]
 boy      = list2OnePlacePred [M,Y]
+king     = list2OnePlacePred [RK,WK]
+queen    = list2OnePlacePred [RQ,WQ]
 princess = list2OnePlacePred [E]
 dwarf    = list2OnePlacePred [B,R]
 giant    = list2OnePlacePred [T]
-wizard   = list2OnePlacePred [W,V,Mer]
+wizard   = list2OnePlacePred [W,V,Mer,Gan]
 sword    = list2OnePlacePred [F]
 dagger   = list2OnePlacePred [X]
-kingdom  = list2OnePlacePred [WzL, Cam]
+kingdom  = list2OnePlacePred [WzL,Cam]
 bed      = list2OnePlacePred [B1,B2,B3]
 tower    = list2OnePlacePred [Tow]
+bear     = list2OnePlacePred [MB,PB,BB]
+mama     = list2OnePlacePred [MB]
+papa     = list2OnePlacePred [PB]
+baby     = list2OnePlacePred [BB]
 
 child, person, man, woman, male, female, thing :: OnePlacePred
 
 child  = \ x -> (girl x  || boy x)
 person = \ x -> (child x || princess x || dwarf x 
                          || giant x    || wizard x) 
-man    = \ x -> (dwarf x || giant x || wizard x) 
-woman  = \ x -> princess x 
+man    = \ x -> (dwarf x || giant x || wizard x || king x) 
+woman  = \ x -> (princess x || queen x)
 male   = \ x -> (man x || boy x) 
 female = \ x -> (woman x || girl x)
 thing  = \ x -> not (person x || x == Unspec)
@@ -69,6 +85,7 @@ dwarven = \ x -> dwarf x
 human   = \ x -> not (dwarf x || giant x || thing x)
 sharp   = list2OnePlacePred [X]
 fake    = list2OnePlacePred []
+royal   = \ x -> ((queen x || king x || princess x) || any (\ p -> (forNP x p || ofNP x p)) (filter royal entities))  -- returns True if belongs to a member of royalty, or to one of their belongings
 
 firstOfTriple :: (a, b, c) -> a
 firstOfTriple (x, _, _) = x
@@ -90,9 +107,9 @@ curry5 f x y z w u = f (x,y,z,w,u)
 
 laugh, cheer, shudder :: OnePlacePred
 laughList = [(A,In,WoL),(G,EmptyPR,Unspec),(E,EmptyPR,Unspec),(W,In,WzL),(V,In,O)]
-sleepList = [(W,In,WzL),(G,In,B1),(G,In,B2),(G,In,B3)]
-cheerList = [(M,In,Unspec), (D,In,Unspec)]
-shudderList = [(S,In,Unspec)]
+sleepList = [(W,In,WzL),(G,In,B1),(G,In,B2),(G,In,B3),(MB,In,B1),(PB,In,B2),(BB,In,B3)]
+cheerList = [(M,EmptyPR,Unspec), (D,In,O)]
+shudderList = [(S,EmptyPR,Unspec),(W,In,WzL)]
 
 laugh   = \ x -> any (\ tr -> firstOfTriple tr == x) laughList
 -- laugh   = list2OnePlacePred [A,G,E,W]
@@ -144,6 +161,11 @@ passivize r = \ x -> r Unspec x
 self ::  (a -> a -> b) -> a -> b
 self p = \ x -> p x x 
 
-inNP, forNP :: TwoPlacePred
+inNP, forNP, ofNP, underNP :: TwoPlacePred
 inNP   = curry (`elem` [(V, Tow), (W, WzL), (Mer, Cam), (A, WoL), (CC, WoL), (Tow, WzL)])
 forNP  = curry (`elem` [(X, E)])
+ofNP   = curry (`elem` [])
+underNP = curry (`elem` [])
+
+betweenNP :: ThreePlacePred
+betweenNP = curry3 (`elem` [(A,WQ,RQ)]) -- implies reverse as well

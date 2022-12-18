@@ -6,3 +6,7 @@ intSent (Sent Goldilocks Slept)  -- True
 intSent (Sent Goldilocks (VP4 (PVP1 SleptP (PP1 In (NP1 Three Bed)))))  -- True
 intSent (Sent CheshireCat (VP1 Helped Alice))  -- True
 intSent (Sent CheshireCat (VP4 (PVP1 (VPP1 HelpedP Alice) (PP1 In Wonderland))))  -- True
+
+intSent (Sent (NP5 Some (ACN Mama Bear)) (COP1 Is (PP1 In (NP1 Some Bed))))  -- False
+intSent (Sent Alice (COP1 Is (PP2 Between RedQueen And WhiteQueen)))  -- True
+intSent (Sent (NP1 Some Girl) (COP1 Is (PP2 Between RedQueen And WhiteQueen)))  -- True

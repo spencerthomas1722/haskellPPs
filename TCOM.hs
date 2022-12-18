@@ -39,6 +39,14 @@ intNP Oz            = \ p -> p oz
 intNP Camelot       = \ p -> p camelot
 intNP Merlin        = \ p -> p merlin
 intNP CheshireCat   = \ p -> p cheshirecat
+intNP RedKing       = \ p -> p redking
+intNP RedQueen      = \ p -> p redqueen
+intNP WhiteKing     = \ p -> p whiteking
+intNP WhiteQueen    = \ p -> p whitequeen
+intNP Gandalf       = \ p -> p gandalf
+intNP MamaBear      = \ p -> p mamabear
+intNP PapaBear      = \ p -> p papabear
+intNP BabyBear      = \ p -> p babybear
 intNP (NP1 det cn)  = (intDET det) (intCN cn) 
 intNP (NP2 det rcn) = (intDET det) (intRCN rcn) 
 intNP (NP3 det pcn) = (intDET det) (intPCN pcn)  -- cn with pp adjunct
@@ -72,6 +80,8 @@ intDV Gave = \ x y z -> give x y z
 intCN :: CN -> Entity -> Bool
 intCN Girl     = \ x -> girl x
 intCN Boy      = \ x -> boy x
+intCN King     = \ x -> king x
+intCN Queen    = \ x -> queen x
 intCN Princess = \ x -> princess x
 intCN Dwarf    = \ x -> dwarf x 
 intCN Giant    = \ x -> giant x 
@@ -81,6 +91,7 @@ intCN Dagger   = \ x -> dagger x
 intCN Kingdom  = \ x -> kingdom x
 intCN Bed      = \ x -> bed x
 intCN Tower    = \ x -> tower x
+intCN Bear     = \ x -> bear x
 
 intDET :: DET -> 
          (Entity -> Bool) -> (Entity -> Bool) -> Bool
@@ -149,12 +160,21 @@ intTVP HelpedP = \ subj obj pr loc -> helpPP subj obj pr loc
 intPP :: PP -> (Entity -> Bool)
 intPP (PP1 pr n) = \ x -> intNP n (\ loc -> intPR pr x loc) -- adapted from intVP
 -- cf. intVP (VP1 tv np) = \ subj -> intNP np (\ obj -> intTV tv subj obj)
--- intPP (PP2 vp pr n) = \ x -> intNP n (\ loc -> intPR pr x vp loc)
+intPP (PP2 pr n1 _ n2) = \ x -> intNP n2 (\ loc2 -> intNP n1 (\ loc1 -> intTPR pr x loc1 loc2))
+--                       \ x -> intNP n1 (intNP n2 (\ loc1 -> \ loc2 -> intDV dv x loc1 loc2))
 
 intPR :: PR -> Entity -> Entity -> Bool -- adapted from intTV
 intPR In x y | inNP x y = True
              | otherwise = any (\ l -> inNP x l) (filter (\ z -> inNP x z) entities)
-intPR For x y = (forNP x y)
+intPR For x y = forNP x y
+intPR Of x y = ofNP x y
+intPR Under x y = underNP x y
+
+intTPR :: TPR -> Entity -> Entity -> Entity -> Bool
+intTPR Between x y z | betweenNP x y z = True
+                     | betweenNP x z y = True
+                     | otherwise = False
+intTPR Betwixt x y z = intTPR Between x y z
 
 intACN :: ACN -> (Entity -> Bool)
 intACN (ACN1 adj cn) = \ x -> ((intCN cn x) && (intADJ adj x))
@@ -166,3 +186,6 @@ intADJ Female  = \ x -> female x
 intADJ Male    = \ x -> male x
 intADJ Sharp   = \ x -> sharp x
 intADJ Fake    = \ x -> fake x  -- had to add this since van Eijck and Unger did --- currently leads to an empty list
+intADJ Mama    = \ x -> mama x
+intADJ Papa    = \ x -> papa x
+intADJ Baby    = \ x -> baby x
