@@ -25,7 +25,7 @@ data Answer   = Black | White deriving (Eq,Show)
 type Pattern  = [Colour]
 type Feedback = [Answer] 
 
-data Sent = Sent NP VP deriving Show
+data Sent = Sent NP VP | Sent1 SNP VP deriving Show
 data NP   = SnowWhite  | Alice  | Dorothy | Goldilocks 
           | LittleMook | Atreyu | Everyone | Someone
           | Wizardland | Wonderland | Camelot | Oz 
@@ -80,8 +80,9 @@ data TPR = Between | Betwixt deriving Show
 data And = And deriving Show
 data PR = In | For | From | Of | At | On | Over | Under | EmptyPR | Behind | ToNP | With deriving (Show, Eq)
 
-data ADJ = Dwarven | Human | Female | Male | Sharp | Fake | Mama | Papa | Baby | Fuzzy | Laughing | Cheering |Sleeping | Shuddering | Crying deriving Show
+data ADJ = Dwarven | Human | Female | Male | Sharp | Fake | Mama | Papa | Baby | Fuzzy | Laughing | Cheering | Sleeping | Shuddering | Crying deriving Show
 data ACN = ACN1 ADJ CN deriving Show
+data SNP = SNP1 DET SACN deriving Show
 data SADJ = Small | Big deriving Show
 data SACN = SACN1 SADJ CN deriving Show
 

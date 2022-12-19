@@ -222,20 +222,21 @@ intADJ Cheering   = \ x -> cheer x
 intADJ Sleeping   = \ x -> sleep x
 intADJ Shuddering = \ x -> shudder x
 intADJ Crying     = \ x -> cry x
-intADJ Small   = \ x -> small x
-intADJ Big     = \ x -> big x
 
 type SubjBool = Entity -> Bool
 
-subjSent :: Sent -> subjBool
-subjSent (Sent snp vp) = SubjNP np (intVP vp)
+subjSent :: Sent -> Entity -> Bool
+subjSent (Sent1 snp vp) = \ pov -> (subjNP snp) pov (intVP vp)
 
-type SubjNP = NP -> Entity -> SubjBool
+subjNP :: SNP -> Entity -> (Entity -> Bool) -> Bool
+subjNP (SNP1 det sacn) = \ pov -> (intDET det) (subjACN sacn pov)
+-- intACN (ACN1 adj cn) = \ x -> ((intCN cn x) && (intADJ adj x))
+-- intNP (NP1 det cn)  = (intDET det) (intCN cn) 
 
-type SubjVP = VP -> Entity -> SubjBool
+-- Type subjVP = VP -> Entity -> Entity -> Bool
 
 subjACN :: SACN -> Entity -> (Entity -> Bool)
-subjACN (SACN1 adj cn pov ) = \ x -> ((intCN cn x) && (subjADJ adj pov x))
+subjACN (SACN1 adj cn) = \ pov -> \ x -> ((intCN cn x) && (subjADJ adj pov x))
 
 subjADJ :: SADJ -> Entity -> Entity -> Bool
 

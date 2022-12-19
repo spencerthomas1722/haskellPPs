@@ -3,10 +3,9 @@ module Model where
 import Data.List
 import FSynFPP
 
-data Entity = A | B | C | D | E | F | G
-            | H | I | J | K | L | M | N 
-            | O | P | Q | R | S | T | U 
-            | V | W | X | Y | Z | Unspec
+data Entity = A | B | D | E | F | G
+            | M | O | R | S | T 
+            | V | W | X | Y | Unspec
             | WzL | WoL | Cam | Tow
             | Mer | CC | WK | WQ | RK | RQ
             | MB | PB | BB
@@ -97,8 +96,6 @@ sharp   = list2OnePlacePred [X]
 fake    = list2OnePlacePred []
 royal   = \ x -> ((queen x || king x || princess x) || any (\ p -> (forNP x p || ofNP x p)) (filter royal entities))  -- returns True if belongs to a member of royalty, or to one of their belongings
 fuzzy   = \ x -> bear x || elem x [W]
-small   = list2OnePlacePred []
-big     = list2OnePlacePred []
 
 firstOfTriple :: (a, b, c) -> a
 firstOfTriple (x, _, _) = x
@@ -200,7 +197,7 @@ overNP = curry (`elem` [(V,WzL)])
 betweenNP :: ThreePlacePred
 betweenNP = curry3 (`elem` [(A,WQ,RQ),(RQ,A,RK),(WQ,A,WK),(WK,WQ,CC)]) -- implies reverse as well; see TCOM
 
-smallToGiant = \ x -> (person x && not (giant x))
+smallToGiant = \ x -> not (place x || giant x)
 smallToHuman = \ x -> dwarf x
 bigToGiant   = \ x -> not (person x)
 bigToHuman   = \ x -> not (person x) || giant x
