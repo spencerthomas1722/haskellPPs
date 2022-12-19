@@ -57,7 +57,7 @@ data TV   = Loved   | Admired | Helped
           deriving Show 
 data BE = Is | Are deriving Show
 
-data DV   = Gave deriving Show
+data DV   = Gave | Killed deriving Show
 data AV   = Hoped | Wanted deriving Show 
 data INF  = Laugh | Sheer | Shudder | INF TINF NP deriving Show
 data TINF = Love | Admire | Help | Defeat | Catch 

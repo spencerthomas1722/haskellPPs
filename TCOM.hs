@@ -75,7 +75,8 @@ intTV Helped   = \ x y -> help x y
 intTV Defeated = \ x y -> defeat x y
 
 intDV :: DV -> Entity -> Entity -> Entity -> Bool
-intDV Gave = \ x y z -> give x y z
+intDV Gave   = \ x y z -> give x y z
+intDV Killed = \ x y z -> kill x y z
 
 intCN :: CN -> Entity -> Bool
 intCN Girl     = \ x -> girl x
@@ -170,9 +171,12 @@ intPR For x y = forNP x y
 intPR Of x y = ofNP x y
 intPR Under x y = underNP x y
 
+entityPairs = [(x, y) | x <- entities, y <- entities]
+
 intTPR :: TPR -> Entity -> Entity -> Entity -> Bool
 intTPR Between x y z | betweenNP x y z = True
                      | betweenNP x z y = True
+                     | any (\ (u,v) -> any (\ l -> intTPR Between u l x) (filter (\ w -> betweenNP u x w || betweenNP u w x) entities)) (filter (\ (u,v) -> betweenNP x u v) entityPairs) = True
                      | otherwise = False
 intTPR Betwixt x y z = intTPR Between x y z
 

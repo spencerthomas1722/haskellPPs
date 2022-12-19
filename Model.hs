@@ -81,7 +81,8 @@ knob     = list2OnePlacePred [DK]
 child, person, male, female, thing :: OnePlacePred
 
 child  = \ x -> (girl x  || boy x)
-person = \ x -> (child x || princess x || dwarf x 
+adult  = \ x -> (person x) && not (child x)
+person = \ x -> (child x || adult x || princess x || dwarf x 
                          || giant x    || wizard x) 
 male   = \ x -> (man x || boy x) 
 female = \ x -> (woman x || girl x)
@@ -95,6 +96,7 @@ human   = \ x -> not (dwarf x || giant x || thing x)
 sharp   = list2OnePlacePred [X]
 fake    = list2OnePlacePred []
 royal   = \ x -> ((queen x || king x || princess x) || any (\ p -> (forNP x p || ofNP x p)) (filter royal entities))  -- returns True if belongs to a member of royalty, or to one of their belongings
+fuzzy   = \ x -> bear x || elem x [W]
 
 firstOfTriple :: (a, b, c) -> a
 firstOfTriple (x, _, _) = x
@@ -184,4 +186,4 @@ ofNP   = \ x y -> (elem (x,y) [(Mer,Cam),(MB,GF),(PB,GF),(RQ,WoL),(RK,WoL),(WQ,W
 underNP = curry (`elem` [(Mer,Cam)])
 
 betweenNP :: ThreePlacePred
-betweenNP = curry3 (`elem` [(A,WQ,RQ),(RQ,A,RK)]) -- implies reverse as well; see TCOM
+betweenNP = curry3 (`elem` [(A,WQ,RQ),(RQ,A,RK),(WQ,A,WK),(WK,WQ,CC)]) -- implies reverse as well; see TCOM
