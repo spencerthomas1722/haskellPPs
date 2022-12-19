@@ -236,7 +236,7 @@ subjNP (SNP1 det sacn) = \ pov -> (intDET det) (subjACN sacn pov)
 -- Type subjVP = VP -> Entity -> Entity -> Bool
 
 subjACN :: SACN -> Entity -> (Entity -> Bool)
-subjACN (SACN1 adj cn) = \ pov -> \ x -> ((intCN cn x) && (subjADJ adj pov x))
+subjACN (SACN1 adj cn) = \ pov -> \ x -> ((intCN cn x) && (subjADJ adj x pov))
 
 subjADJ :: SADJ -> Entity -> Entity -> Bool
 
@@ -247,5 +247,5 @@ subjADJ Small x i | giant i = smallToGiant x
 
 subjADJ Big x i | giant i = bigToGiant x
                 | human i = bigToHuman x
-                | dwarf i = not (dwarf x)
+                | dwarf i = bigToDwarf x
                 | otherwise = False

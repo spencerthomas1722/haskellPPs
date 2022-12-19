@@ -76,13 +76,13 @@ baby     = list2OnePlacePred [BB]
 forest   = list2OnePlacePred [GF,MF]
 gift     = list2OnePlacePred [AM,DM,X]
 knob     = list2OnePlacePred [DK]
+human    = list2OnePlacePred [S,A,D,G,E,W,V,Y,RQ,WQ,RK,WK,Mer,Gan,WOz]
 
 child, person, male, female, thing :: OnePlacePred
 
 child  = \ x -> (girl x  || boy x)
 adult  = \ x -> (person x) && not (child x)
-person = \ x -> (child x || adult x || princess x || dwarf x 
-                         || giant x    || wizard x) 
+person = \ x -> (human x || dwarf x || giant x || wizard x) 
 male   = \ x -> (man x || boy x) 
 female = \ x -> (woman x || girl x)
 thing  = \ x -> (not (person x || x == Unspec)) || knob x
@@ -91,7 +91,6 @@ place  = \ x -> (forest x || kingdom x)
 -- New/altered stuff --
 
 dwarven = \ x -> dwarf x
-human   = \ x -> not (dwarf x || giant x || thing x)
 sharp   = list2OnePlacePred [X]
 fake    = list2OnePlacePred []
 royal   = \ x -> ((queen x || king x || princess x) || any (\ p -> (forNP x p || ofNP x p)) (filter royal entities))  -- returns True if belongs to a member of royalty, or to one of their belongings
@@ -199,5 +198,6 @@ betweenNP = curry3 (`elem` [(A,WQ,RQ),(RQ,A,RK),(WQ,A,WK),(WK,WQ,CC)]) -- implie
 
 smallToGiant = \ x -> not (place x || giant x)
 smallToHuman = \ x -> dwarf x
-bigToGiant   = \ x -> not (person x)
-bigToHuman   = \ x -> not (person x) || giant x
+bigToGiant   = \ x -> place x
+bigToHuman   = \ x -> place x || giant x
+bigToDwarf   = \ x -> place x || (person x && not (dwarf x))
