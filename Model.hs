@@ -61,7 +61,7 @@ woman    = list2OnePlacePred [RQ,WQ,E,T,R,W,V]
 man      = list2OnePlacePred [RK,WK,B,R,V,Mer,Gan,WOz]
 king     = list2OnePlacePred [RK,WK]
 queen    = list2OnePlacePred [RQ,WQ]
-princess = list2OnePlacePred [E]
+princess = list2OnePlacePred [S,E]
 dwarf    = list2OnePlacePred [B,R]
 giant    = list2OnePlacePred [T]
 wizard   = list2OnePlacePred [W,V,Mer,Gan,WOz]
@@ -75,7 +75,7 @@ mama     = list2OnePlacePred [MB]
 papa     = list2OnePlacePred [PB]
 baby     = list2OnePlacePred [BB]
 forest   = list2OnePlacePred [GF,MF]
-gift     = list2OnePlacePred [AM,DM]
+gift     = list2OnePlacePred [AM,DM,X]
 knob     = list2OnePlacePred [DK]
 
 child, person, male, female, thing :: OnePlacePred
@@ -104,6 +104,9 @@ firstOfTriple (x, _, _) = x
 firstTwoOfQuadruple :: (a, b, c, d) -> (a, b)
 firstTwoOfQuadruple (x, y, _, _) = (x, y)
 
+firstTwoOfQuintuple ::(a, b, c, d, e) -> (a, b)
+firstTwoOfQuintuple (x, y, _, _, _) = (x, y)
+ 
 firstThreeOfQuintuple :: (a, b, c, d, e) -> (a, b, c)
 firstThreeOfQuintuple (x, y, z, _, _) = (x, y, z)
 
@@ -137,20 +140,26 @@ cheerPP   = \ pr subj loc -> curry3 (`elem` cheerList) subj pr loc
 shudderPP = \ pr subj loc -> curry3 (`elem` shudderList) subj pr loc
 cryPP     = \ pr subj loc -> curry3 (`elem` cryList) subj pr loc
 
-love, admire, help, defeat :: TwoPlacePred
+love, admire, help, defeat, kill :: TwoPlacePred
 
-loveList   = [(Y,E,EmptyPR,Unspec),(B,S,EmptyPR,Unspec),(R,S,EmptyPR,Unspec), (MB,PB,EmptyPR,Unspec),(PB,MB,EmptyPR,Unspec),(MB,BB,EmptyPR,Unspec),(BB,MB,EmptyPR,Unspec), (PB,BB,EmptyPR,Unspec),(BB,PB,EmptyPR,Unspec),(Gan,Mer,EmptyPR,Unspec)]
+loveList   = [(Y,E,EmptyPR,Unspec),(B,S,EmptyPR,Unspec),(R,S,EmptyPR,Unspec), (MB,PB,EmptyPR,Unspec),(PB,MB,EmptyPR,Unspec),(MB,BB,EmptyPR,Unspec),(BB,MB,EmptyPR,Unspec), (PB,BB,EmptyPR,Unspec),(BB,PB,EmptyPR,Unspec),(Gan,Mer,EmptyPR,Unspec),(Mer,Gan,EmptyPR,Unspec)]
 -- loveList has no PRs/locations because these people's love transcends time and space ^_^
 admireList = [(x,G,EmptyPR,Unspec) | x <- entities, person x] ++ [(BB,MB,EmptyPR,Unspec), (BB,PB,EmptyPR,Unspec)]
 helpList   = [(W,W,EmptyPR,Unspec),(V,V,EmptyPR,Unspec),(S,B,In,WzL),(D,M,In,WzL),(CC,A,In,WoL),(WOz,D,In,O),(B,S,In,MF),(R,S,In,MF)]
 defeatList = [(x,y,EmptyPR,Unspec) | x <- entities, y <- entities, dwarf x && giant y]
                     ++ [(A,W,In,WoL),(A,V,In,WoL),(PB,G,In,GF),(MB,G,In,GF),
                         (BB,G,In,GF)]
+seeList    = [(x,A,In,WoL) | x <- filter (\ w -> inNP w WoL) entities] ++ [(x,y,In,GF) | x <- entities, y <- entities, bear x && bear y] ++ [(E,Y,EmptyPR,Unspec),(Y,E,EmptyPR,Unspec),(WOz,D,In,O),(V,W,Over,WzL),(W,V,In,WzL)]
+killList = [(Y,T,F,EmptyPR,Unspec),(Unspec,D,X,In,O),(Unspec,M,Unspec,EmptyPR,Unspec),
+            (MB,G,MB,In,GF),(PB,G,PB,In,GF),(MB,G,MB,With,PB),(PB,G,BB,With,MB)]
 
 love   = \ x y -> any (\ quad -> firstTwoOfQuadruple quad == (x,y)) loveList
 admire = \ x y -> any (\ quad -> firstTwoOfQuadruple quad == (x,y)) admireList
 help   = \ x y -> any (\ quad -> firstTwoOfQuadruple quad == (x,y)) helpList
 defeat = \ x y -> any (\ quad -> firstTwoOfQuadruple quad == (x,y)) defeatList
+see    = \ x y -> any (\ quad -> firstTwoOfQuadruple quad == (x,y)) seeList
+kill   = \ x y -> any (\ quin -> firstTwoOfQuintuple quin == (x,y)) killList
+kill3  = \ x y z -> any (\quin -> firstThreeOfQuintuple quin == (x,y,z)) killList
 
 lovePP, admirePP, helpPP, defeatPP :: Entity -> Entity -> PR -> Entity -> Bool
 lovePP   = curry4 (`elem` loveList)
@@ -159,18 +168,18 @@ helpPP   = curry4 (`elem` helpList)
 -- "help x y" itself is True if there is some preposition PR and location "loc" 
 --  where (x,y,PR) is in this list
 defeatPP = curry4 (`elem` defeatList)
+seePP    = curry4 (`elem` seeList)
+-- X killed Y [PR] [Loc] is true if there is any weapon such that...
+killPP   = \ x y z w -> any (\ weapon -> elem (x,y,weapon,z,w) killList) entities
+                        || (z == With && kill3 x y w)
 
-give, kill :: ThreePlacePred
+give :: ThreePlacePred
 
 giveList = [(T,S,X,In,Unspec),(A,E,S,In,Unspec),(E,Y,AM,In,MF),(Unspec,A,DM,EmptyPR,Unspec)]
-killList = [(Y,T,F,EmptyPR,Unspec),(Unspec,D,X,In,O),(Unspec,M,Unspec,EmptyPR,Unspec),
-            (MB,G,MB,In,GF),(PB,G,PB,In,GF)]
 
 give = \ x y z -> any (\ quin -> firstThreeOfQuintuple quin == (x,y,z)) giveList
-kill = \ x y z -> any (\ quin -> firstThreeOfQuintuple quin == (x,y,z)) killList
 
 givePP = curry5 (`elem` giveList)
-killPP = curry5 (`elem` killList)
 
 passivize :: TwoPlacePred -> OnePlacePred
 passivize r = \ x -> r Unspec x
@@ -184,6 +193,7 @@ forNP  = curry (`elem` [(X, E)])
 fromNP = curry (`elem` [(V,WzL),(W,WzL),(WOz,O),(B,MF),(R,MF),(BB,GF)])
 ofNP   = \ x y -> (elem (x,y) [(Mer,Cam),(MB,GF),(PB,GF),(RQ,WoL),(RK,WoL),(WQ,WoL),(WK,WoL)]) || fromNP x y
 underNP = curry (`elem` [(Mer,Cam)])
+overNP = curry (`elem` [(V,WzL)])
 
 betweenNP :: ThreePlacePred
 betweenNP = curry3 (`elem` [(A,WQ,RQ),(RQ,A,RK),(WQ,A,WK),(WK,WQ,CC)]) -- implies reverse as well; see TCOM

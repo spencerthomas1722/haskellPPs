@@ -31,7 +31,7 @@ data NP   = SnowWhite  | Alice  | Dorothy | Goldilocks
           | Wizardland | Wonderland | Camelot | Oz 
           | Merlin | CheshireCat | RedKing | RedQueen
           | WhiteKing | WhiteQueen | MamaBear | PapaBear
-          | BabyBear | Gandalf
+          | BabyBear | Gandalf | GrizzlyForest | MagicForest
           | NP1 DET CN | NP2 DET RCN | NP3 DET PCN
           | NP4 PNP | NP5 DET ACN
           deriving Show
@@ -40,24 +40,24 @@ data DET  = The | Every | Some | No | Most | AtLeast | AtMost | One | Two | Thre
 data CN   = Girl   | Boy   | Princess | Dwarf | Giant 
           | Wizard | Sword | Dagger | Kingdom | Bed | Tower
           | CNP CN PP | ACN ADJ CN -- CNP CN PP new
-          | King | Queen | Bear
+          | King | Queen | Bear | Forest
           deriving Show 
 -- ADJ has been moved to the "NEW" section below
 data RCN  = RCN1 CN That VP | RCN2 CN That NP TV
-          | RCN3 ADJ CN
+          | RCN3 PCN That VP | RCN4 ACN That VP
           deriving Show
 data That = That deriving Show
-data VP   = Laughed | Cheered | Shuddered | Slept
+data VP   = Laughed | Cheered | Shuddered | Slept | Cried
           | VP1 TV NP | VP2 DV NP NP
-          | VP3 AV To INF | VP4 PVP
+          | VP3 AV To INF | VP4 PVP 
           | COP1 BE PP | COP2 BE ADJ | COP3 BE NP 
           deriving Show 
 data TV   = Loved   | Admired | Helped 
-          | Defeated | Caught
+          | Defeated | Caught | Saw | Killed
           deriving Show 
 data BE = Is | Are deriving Show
 
-data DV   = Gave | Killed deriving Show
+data DV   = Gave deriving Show
 data AV   = Hoped | Wanted deriving Show 
 data INF  = Laugh | Sheer | Shudder | INF TINF NP deriving Show
 data TINF = Love | Admire | Help | Defeat | Catch 
@@ -66,19 +66,21 @@ data To   = To deriving Show
 
 -- NEW: --
 
-data TVP = HelpedP | LovedP | AdmiredP deriving Show
-data VPP = LaughedP | CheeredP | ShudderedP | SleptP 
-          | VPP1 TVP NP  -- TODO rewrite as VPP1 TV PP?
+data TVP = HelpedP | LovedP | AdmiredP | DefeatedP | SawP | KilledP deriving Show
+data DVP = GaveP deriving Show
+data VPP = LaughedP | CheeredP | ShudderedP | SleptP | CriedP
+          | VPP1 TVP NP | VPP2 DVP NP NP -- TODO rewrite as VPP1 TV PP?
           | TVP NP deriving Show
-data PCN = PCN1 CN PP deriving Show
+-- data DVPR = DVPR1 DV NP PR NP deriving Show
+data PCN = PCN1 CN PP | PCN2 RCN PP | PCN3 ACN PP deriving Show
 data PNP = PNP1 NP PP deriving Show
-data PVP = PVP1 VPP PP | PVP2 TVP NP PP deriving Show
+data PVP = PVP1 VPP PP | PVP2 TVP NP PP | PVP3 DVP NP NP PP deriving Show
 data PP = Here | There | PP1 PR NP | PP2 TPR NP And NP deriving Show
 data TPR = Between | Betwixt deriving Show
 data And = And deriving Show
-data PR = In | For | Of | At | On | Over | Under | EmptyPR | Behind deriving (Show, Eq)
+data PR = In | For | From | Of | At | On | Over | Under | EmptyPR | Behind | ToNP | With deriving (Show, Eq)
 
-data ADJ = Dwarven | Human | Female | Male | Sharp | Fake | Mama | Papa | Baby deriving Show
+data ADJ = Dwarven | Human | Female | Male | Sharp | Fake | Mama | Papa | Baby | Fuzzy | Laughing | Cheering |Sleeping | Shuddering | Crying deriving Show
 data ACN = ACN1 ADJ CN deriving Show
 
 -- /NEW --
