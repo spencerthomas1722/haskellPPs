@@ -222,3 +222,29 @@ intADJ Cheering   = \ x -> cheer x
 intADJ Sleeping   = \ x -> sleep x
 intADJ Shuddering = \ x -> shudder x
 intADJ Crying     = \ x -> cry x
+intADJ Small   = \ x -> small x
+intADJ Big     = \ x -> big x
+
+type SubjBool = Entity -> Bool
+
+subjSent :: Sent -> subjBool
+subjSent (Sent snp vp) = SubjNP np (intVP vp)
+
+type SubjNP = NP -> Entity -> SubjBool
+
+type SubjVP = VP -> Entity -> SubjBool
+
+subjACN :: SACN -> Entity -> (Entity -> Bool)
+subjACN (SACN1 adj cn pov ) = \ x -> ((intCN cn x) && (subjADJ adj pov x))
+
+subjADJ :: SADJ -> Entity -> Entity -> Bool
+
+subjADJ Small x i | giant i = smallToGiant x
+                  | human i = smallToHuman x
+                  | dwarf i = False 
+                  | otherwise = False
+
+subjADJ Big x i | giant i = bigToGiant x
+                | human i = bigToHuman x
+                | dwarf i = not (dwarf x)
+                | otherwise = False

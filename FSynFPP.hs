@@ -82,6 +82,8 @@ data PR = In | For | From | Of | At | On | Over | Under | EmptyPR | Behind | ToN
 
 data ADJ = Dwarven | Human | Female | Male | Sharp | Fake | Mama | Papa | Baby | Fuzzy | Laughing | Cheering |Sleeping | Shuddering | Crying deriving Show
 data ACN = ACN1 ADJ CN deriving Show
+data SADJ = Small | Big deriving Show
+data SACN = SACN1 SADJ CN deriving Show
 
 -- /NEW --
 

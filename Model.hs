@@ -97,6 +97,8 @@ sharp   = list2OnePlacePred [X]
 fake    = list2OnePlacePred []
 royal   = \ x -> ((queen x || king x || princess x) || any (\ p -> (forNP x p || ofNP x p)) (filter royal entities))  -- returns True if belongs to a member of royalty, or to one of their belongings
 fuzzy   = \ x -> bear x || elem x [W]
+small   = list2OnePlacePred []
+big     = list2OnePlacePred []
 
 firstOfTriple :: (a, b, c) -> a
 firstOfTriple (x, _, _) = x
@@ -197,3 +199,8 @@ overNP = curry (`elem` [(V,WzL)])
 
 betweenNP :: ThreePlacePred
 betweenNP = curry3 (`elem` [(A,WQ,RQ),(RQ,A,RK),(WQ,A,WK),(WK,WQ,CC)]) -- implies reverse as well; see TCOM
+
+smallToGiant = \ x -> (person x && not (giant x))
+smallToHuman = \ x -> dwarf x
+bigToGiant   = \ x -> not (person x)
+bigToHuman   = \ x -> not (person x) || giant x
