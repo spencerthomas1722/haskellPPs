@@ -227,13 +227,14 @@ type SubjBool = Entity -> Bool
 
 subjSent :: Sent -> Entity -> Bool
 subjSent (Sent1 snp vp) = \ pov -> (subjNP snp) pov (intVP vp)
+subjSent (Sent2 np svp) = \ pov -> (intNP np) (subjVP svp pov)
 
 subjNP :: SNP -> Entity -> (Entity -> Bool) -> Bool
 subjNP (SNP1 det sacn) = \ pov -> (intDET det) (subjACN sacn pov)
--- intACN (ACN1 adj cn) = \ x -> ((intCN cn x) && (intADJ adj x))
--- intNP (NP1 det cn)  = (intDET det) (intCN cn) 
 
--- Type subjVP = VP -> Entity -> Entity -> Bool
+subjVP :: SVP -> Entity -> Entity -> Bool
+subjVP (SVP1 vp snp) = \ pov -> \ x -> (subjNP snp pov) (\ obj -> intTV vp x obj)
+
 
 subjACN :: SACN -> Entity -> (Entity -> Bool)
 subjACN (SACN1 adj cn) = \ pov -> \ x -> ((intCN cn x) && (subjADJ adj x pov))
