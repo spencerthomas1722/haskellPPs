@@ -12,15 +12,17 @@ intSent (Sent Alice (COP1 Is (PP2 Between RedQueen And WhiteQueen)))  -- True
 intSent (Sent (NP1 Some Girl) (COP1 Is (PP2 Between RedQueen And WhiteQueen)))  -- True
 
 W saw [V over Wizardland]: True
-intSent (Sent (NP5 Some (ACN1 Fuzzy Wizard)) (VP1 Saw (NP4 (PNP1 (NP1 Some Wizard) (PP1 Over Wizardland)))))
+intSent (Sent (NP5 Some (ACN1 Fuzzy Wizard)) (VP1 Saw (NP4 (PNP1 (NP1 Some Wizard) (PP1 Over Wizardland)))))  -- True
 W [saw V] over Wizardland: False
-intSent (Sent (NP5 Some (ACN1 Fuzzy Wizard)) (VP4 (PVP1 (VPP1 SawP (NP1 Some Wizard)) (PP1 Over Wizardland))))
+intSent (Sent (NP5 Some (ACN1 Fuzzy Wizard)) (VP4 (PVP1 (VPP1 SawP (NP1 Some Wizard)) (PP1 Over Wizardland))))  -- False
 
-"[Wizard] of Wizardland"
+intSent (Sent (PNP1 (NP1 Some Wizard) (PP1 Of Camelot)) Slept)
 Alice between WQ, RQ && RQ between WQ, RK => Alice is between WQ,RK; RQ is between RK, WQ
 intSent (Sent Alice (COP1 Is (PP2 Between RedKing And WhiteQueen)))  -- True
 intSent (Sent Alice (COP1 Is (PP2 Between WhiteQueen And RedKing)))  -- True
 intSent (Sent RedQueen (COP1 Is (PP2 Between RedKing And WhiteQueen)))  -- True
+
+subjSent (Sent2 (NP1 Some Wizard) (SVP1 Loved (SNP1 Some (SACN1 Small Wizard)))) T  -- True
 
 Combining PCN --> ACN:
 intSent (Sent (NP3 Every (PCN1 (NP5 Male Wizard) (PP1 In (NP1 Some Kingdom)))) Laughed)  -- False
@@ -32,17 +34,12 @@ Some wizard in some kingdom who loved some (other) wizard shuddered
 intSent (Sent (NP2 Some (RCN3 (PCN1 Wizard (PP1 Under (NP1 Some Kingdom))) That (VP1 Loved (NP1 Some Wizard)))) Shuddered) -- True
 PCN --> RCN
 Some wizard that shuddered [in camelot] killed some princess
-intSent (Sent (NP3 Some (PCN2 (RCN1 Wizard That Shuddered)) (PP1 In Camelot)) (VP1 Killed (NP1 Some Princess)))
+intSent (Sent (NP3 Some (PCN2 (RCN1 Wizard That Shuddered)) (PP1 In Camelot)) (VP1 Killed (NP1 Some Princess)))  -- False
 ACN --> PCN
 ACN --> RCN
 RCN --> PCN --> ACN:
 Some fuzzy wizard from Wizardland who laughed is a woman.
 intSent (Sent (NP2 Some (RCN3 (PCN3 (ACN1 Fuzzy Wizard) (PP1 From Wizardland)) That Laughed)) (COP2 Is Female))
-
-intSent (Sent MamaBear (VP1 Killed Goldilocks))
-intSent (Sent MamaBear (VP4 (PVP1 (VPP1 KilledP Goldilocks) (PP1 With MamaBear))))
-
-Can't stack NPs: "Mama Bear killed Goldilocks in the Grizzly Forest with Papa Bear"
 
 PNP --> NP --> RCN/ACN doesn't work: *** Exception: TCOM.hs:148:12-32: Non-exhaustive patterns in NP1 inDet inCn
 Every wizard who laughed in some kingdom cried.

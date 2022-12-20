@@ -32,6 +32,7 @@ data NP   = SnowWhite  | Alice  | Dorothy | Goldilocks
           | Merlin | CheshireCat | RedKing | RedQueen
           | WhiteKing | WhiteQueen | MamaBear | PapaBear
           | BabyBear | Gandalf | GrizzlyForest | MagicForest
+          | English | Haskell
           | NP1 DET CN | NP2 DET RCN | NP3 DET PCN
           | NP4 PNP | NP5 DET ACN
           deriving Show
@@ -78,7 +79,7 @@ data PVP = PVP1 VPP PP | PVP2 TVP NP PP | PVP3 DVP NP NP PP deriving Show
 data PP = Here | There | PP1 PR NP | PP2 TPR NP And NP deriving Show
 data TPR = Between | Betwixt deriving Show
 data And = And deriving Show
-data PR = In | For | From | Of | At | On | Over | Under | EmptyPR | Behind | ToNP | With deriving (Show, Eq)
+data PR = In | For | From | Of | Over | Under | Like | EmptyPR | With deriving (Show, Eq)
 
 data ADJ = Dwarven | Human | Female | Male | Sharp | Fake | Mama | Papa | Baby | Fuzzy | Laughing | Cheering | Sleeping | Shuddering | Crying deriving Show
 data ACN = ACN1 ADJ CN deriving Show

@@ -51,6 +51,8 @@ intNP PapaBear      = \ p -> p papabear
 intNP BabyBear      = \ p -> p babybear
 intNP GrizzlyForest = \ p -> p grizzlyforest
 intNP MagicForest   = \ p -> p magicforest
+intNP English       = \ p -> p english
+intNP Haskell       = \ p -> p haskell
 intNP (NP1 det cn)  = (intDET det) (intCN cn) 
 intNP (NP2 det rcn) = (intDET det) (intRCN rcn) 
 intNP (NP3 det pcn) = (intDET det) (intPCN pcn)  -- cn with pp adjunct
@@ -187,12 +189,17 @@ intPP (PP2 pr n1 _ n2) = \ x -> intNP n2 (\ loc2 -> intNP n1 (\ loc1 -> intTPR p
 
 intPR :: PR -> Entity -> Entity -> Bool -- adapted from intTV
 intPR In x y | inNP x y = True
-             | otherwise = any (\ l -> inNP x l) (filter (\ z -> inNP x z) entities)
-intPR For x y   = forNP x y
-intPR From x y  = fromNP x y
-intPR Of x y    = ofNP x y
-intPR Under x y = underNP x y
-intPR Over x y  = overNP x y
+             | otherwise = any (\ l -> intPR In l y) (filter (\ z -> inNP x z) entities)
+intPR For x y = for x y
+intPR From x y | from x y = True
+               | otherwise = any (\ l -> intPR In y l) (filter (\ z -> from x z) entities)
+intPR Of x y   | ofNP x y = True
+               | otherwise = any (\ l -> intPR In y l) (filter (\ z -> ofNP x z) entities)
+intPR Under x y | under x y = True
+                | otherwise = any (\ l -> intPR Under y l) (filter (\ z -> under x z) entities)
+intPR Over x y  | over x y = True
+                | otherwise = any (\ l -> intPR Over y l) (filter (\ z -> over x z) entities)
+intPR Like x y  = like x y
 
 entityPairs = [(x, y) | x <- entities, y <- entities]
 
@@ -240,7 +247,6 @@ subjACN :: SACN -> Entity -> (Entity -> Bool)
 subjACN (SACN1 adj cn) = \ pov -> \ x -> ((intCN cn x) && (subjADJ adj x pov))
 
 subjADJ :: SADJ -> Entity -> Entity -> Bool
-
 subjADJ Small x i | giant i = smallToGiant x
                   | human i = smallToHuman x
                   | dwarf i = False 

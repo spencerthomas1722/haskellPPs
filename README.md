@@ -2,14 +2,14 @@
 - [x] Adjunct PPs ("[every wizard in every kingdom] laughed")
     - [x] Adjuncts on VPs ("every wizard [laughed in some kingdom]")
 - [x] Predicative PPs ("every wizard is in some kingdom")
-    - [ ] Other uses of the copula?
+    - [x] Other uses of the copula
 - [x] Scope ambiguity
-- [ ] Implications
-- [ ] Adjectives
+- [x] Implications
+- [x] Adjectives
     - [ ] Comparisons ("more", "less")
-    - [ ] Subjective adjectives (e.g. "good wizard")
+    - [x] Subjective adjectives (e.g. "good wizard")
 - [x] Add more vocabulary
 
-- [ ] Do we want to be able to mix PCNs and RCNs?
-- [ ] Remove \#problematic gender stuff?
+- [x] Mix PCNs and RCNs
+- [x] Remove \#problematic gender stuff?
 - [ ] Passivize, e.g. "the bed was slept in"?

@@ -11,7 +11,7 @@ data Entity = A | B | D | E | F | G
             | MB | PB | BB
             | B1 | B2 | B3
             | Gan | WOz | GF | MF | DK
-            | AM | DM
+            | AM | DM | Eng | Hask
      deriving (Eq,Show,Bounded,Enum)
 
 entities :: [Entity]
@@ -43,6 +43,8 @@ wizardofoz = WOz
 grizzlyforest = GF
 magicforest = MF
 doorknob      = DK
+english = Eng
+haskell = Hask
 
 type OnePlacePred   = Entity -> Bool
 type TwoPlacePred   = Entity -> Entity -> Bool
@@ -93,7 +95,7 @@ place  = \ x -> (forest x || kingdom x)
 dwarven = \ x -> dwarf x
 sharp   = list2OnePlacePred [X]
 fake    = list2OnePlacePred []
-royal   = \ x -> ((queen x || king x || princess x) || any (\ p -> (forNP x p || ofNP x p)) (filter royal entities))  -- returns True if belongs to a member of royalty, or to one of their belongings
+royal   = \ x -> ((queen x || king x || princess x) || any (\ p -> (for x p || ofNP x p)) (filter royal entities))  -- returns True if belongs to a member of royalty, or to one of their belongings
 fuzzy   = \ x -> bear x || elem x [W]
 
 firstOfTriple :: (a, b, c) -> a
@@ -119,7 +121,7 @@ curry5 f x y z w u = f (x,y,z,w,u)
 
 laugh, cheer, shudder :: OnePlacePred
 laughList   = [(A,In,WoL),(G,EmptyPR,Unspec),(E,EmptyPR,Unspec),(W,In,WzL),(V,In,O)]
-sleepList   = [(W,In,WzL),(G,In,B1),(G,In,B2),(G,In,B3),(MB,In,B1),(PB,In,B2),(BB,In,B3)]
+sleepList   = [(W,In,WzL),(G,In,B1),(G,In,B2),(G,In,B3),(MB,In,B1),(PB,In,B2),(BB,In,B3),(S,In,MF),(Mer,Under,Cam)]
 cheerList   = [(M,EmptyPR,Unspec),(D,In,O)]
 shudderList = [(S,EmptyPR,Unspec),(W,In,WzL),(Gan,EmptyPR,Unspec),(Mer,Under,Cam)]
 cryList     = [(D,In,O),(MB,EmptyPR,Unspec)]
@@ -185,13 +187,14 @@ passivize r = \ x -> r Unspec x
 self ::  (a -> a -> b) -> a -> b
 self p = \ x -> p x x 
 
-inNP, forNP, ofNP, underNP :: TwoPlacePred
-inNP   = curry (`elem` [(V,Tow),(W,WzL),(Mer,Cam),(A,WoL),(CC,WoL),(Tow,WzL)])
-forNP  = curry (`elem` [(X, E)])
-fromNP = curry (`elem` [(V,WzL),(W,WzL),(WOz,O),(B,MF),(R,MF),(BB,GF)])
-ofNP   = \ x y -> (elem (x,y) [(Mer,Cam),(MB,GF),(PB,GF),(RQ,WoL),(RK,WoL),(WQ,WoL),(WK,WoL)]) || fromNP x y
-underNP = curry (`elem` [(Mer,Cam)])
-overNP = curry (`elem` [(V,WzL)])
+inNP, for, from, ofNP, under, over, like :: TwoPlacePred
+inNP   = curry (`elem` [(V,Tow),(W,WzL),(Mer,Cam),(A,WoL),(CC,WoL),(Tow,WzL),(MF,WzL),(S,MF)])
+for  = curry (`elem` [(X, E)])
+from = curry (`elem` [(V,WzL),(W,WzL),(WOz,O),(B,MF),(R,MF),(BB,GF)])
+ofNP   = \ x y -> (elem (x,y) [(Mer,Cam),(MB,GF),(PB,GF),(RQ,WoL),(RK,WoL),(WQ,WoL),(WK,WoL)]) || from x y
+under = curry (`elem` [(Mer,Cam)])
+over = curry (`elem` [(V,WzL)])
+like = curry (`elem` [(MB,BB),(PB,BB),(BB,MB),(BB,PB),(RQ,RK)])
 
 betweenNP :: ThreePlacePred
 betweenNP = curry3 (`elem` [(A,WQ,RQ),(RQ,A,RK),(WQ,A,WK),(WK,WQ,CC)]) -- implies reverse as well; see TCOM
